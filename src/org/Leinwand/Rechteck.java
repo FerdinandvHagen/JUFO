@@ -11,13 +11,15 @@ import org.newdawn.slick.opengl.Texture;
  *
  * @author ADMIN
  */
-public class Rechteck extends OBJECT_2D {
+public class Rechteck extends OBJECT_2D
+{
 
     private double w, h;
     private Texture textur;
     private int scalex, scaley;
 
-    public Rechteck(int x, int y, int w, int h) {
+    public Rechteck(int x, int y, int w, int h)
+    {
         this.x = x;
         this.y = y;
         this.w = w;
@@ -27,7 +29,8 @@ public class Rechteck extends OBJECT_2D {
         setzeFarbe("schwarz");
     }
 
-    public Rechteck(double x, double y, double w, double h) {
+    public Rechteck(double x, double y, double w, double h)
+    {
         this.x = x;
         this.y = y;
         this.w = w;
@@ -37,27 +40,33 @@ public class Rechteck extends OBJECT_2D {
         setzeFarbe("schwarz");
     }
 
-    public void scaleup(int x, int y) {
+    public void scaleup(int x, int y)
+    {
         this.scalex = x;
         this.scaley = y;
     }
 
-    public void zeichnen(double factor) {
+    public void zeichnen(double factor)
+    {
         double pointx, pointy;
-        if (rotation != 0) {
+        if (rotation != 0)
+        {
             transx = x + (w / 2);
             transy = y + (h / 2);
             pointx = -w / 2;
             pointy = -h / 2;
 
             processTranslationsOne();
-        } else {
+        }
+        else
+        {
             pointx = x;
             pointy = y;
         }
 
         //Hier wird das Objekt gezeichnet
-        if (textur == null) {
+        if (textur == null)
+        {
             glColor4d(colorrd, colorgr, colorbl, alpha);
             glBegin(GL_QUADS);
             glVertex2d(pointx, pointy);
@@ -65,7 +74,9 @@ public class Rechteck extends OBJECT_2D {
             glVertex2d(pointx + w, pointy + h);
             glVertex2d(pointx, pointy + h);
             glEnd();
-        } else {
+        }
+        else
+        {
             glColor4d(1f, 1f, 1f, 1f);
             glDisable(GL_TEXTURE_2D);
             glEnable(GL_TEXTURE_2D);
@@ -75,8 +86,10 @@ public class Rechteck extends OBJECT_2D {
             double scw = this.w / this.scalex;
             double sch = this.h / this.scaley;
 
-            for (int scx = this.scalex; scx > 0; scx--) {
-                for (int scy = this.scaley; scy > 0; scy--) {
+            for (int scx = this.scalex; scx > 0; scx--)
+            {
+                for (int scy = this.scaley; scy > 0; scy--)
+                {
                     double scbx = pointx + ((scx - 1) * scw);
                     double scby = pointy + ((scy - 1) * sch);
                     glTexCoord2f(1, 0);
@@ -96,49 +109,76 @@ public class Rechteck extends OBJECT_2D {
             glEnd();
             glDisable(GL_TEXTURE_2D);
         }
-        if (rotation != 0) {
+        if (rotation != 0)
+        {
             processTranslationsTwo();
         }
     }
 
-    public void bewegen(int x, int y) {
+    public void bewegen(int x, int y)
+    {
         this.x = x;
         this.y = y;
     }
 
-    public void ladeTextur(String textur) {
+    public void ladeTextur(String textur)
+    {
         this.textur = Leinwand.gibLeinwand().loadTexture(textur);
     }
 
-    public double getXd() {
+    public double getXd()
+    {
         return this.x;
     }
 
-    public int getX() {
+    public int getX()
+    {
         return (int) this.x;
     }
 
-    public double getYd() {
+    public double getYd()
+    {
         return this.y;
     }
 
-    public int getY() {
+    public int getY()
+    {
         return (int) this.y;
     }
 
-    public double getWd() {
+    public double getWd()
+    {
         return this.w;
     }
 
-    public int getW() {
+    public int getW()
+    {
         return (int) this.w;
     }
 
-    public double getHd() {
+    public double getHd()
+    {
         return this.h;
     }
 
-    public int getH() {
+    public int getH()
+    {
         return (int) this.h;
+    }
+
+    //Boundingzeug
+    public int bh()
+    {
+        return (int) this.h;
+    }
+
+    public int bw()
+    {
+        return (int) this.w;
+    }
+
+    public boolean schneidet(OBJECT_2D obj)
+    {
+        return PhysicEngine.checkviolation(obj, this);
     }
 }

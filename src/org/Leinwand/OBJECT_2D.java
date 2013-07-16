@@ -4,6 +4,7 @@
  */
 package org.Leinwand;
 
+import java.util.List;
 import static org.lwjgl.opengl.GL11.*;
 /**
  *
@@ -195,4 +196,16 @@ public abstract class OBJECT_2D
         glTranslatef((float) (-1*transx), (float) (-1*transy), 0f);
         glPopAttrib();
     }
+    
+    //Hier kommt jetzt das ganze mit den BoundingSachen
+    public int bx()
+    {
+        return (int)this.x;
+    }
+    public int by()
+    {
+        return (int)this.y;
+    }
+    
+    public abstract boolean schneidet(OBJECT_2D obj);
 }

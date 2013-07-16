@@ -137,4 +137,10 @@ public class Text extends OBJECT_2D
     {
         return (int)this.y;
     }
+
+    @Override
+    public boolean schneidet(OBJECT_2D obj)
+    {
+        return false;
+    }
 }

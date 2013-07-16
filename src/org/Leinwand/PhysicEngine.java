@@ -10,369 +10,559 @@ import java.util.*;
  *
  * @author Info3-S20
  */
-public class PhysicEngine {
-    public static boolean checkviolation(BoundingRechteck b1, BoundingRechteck b2) {
+public class PhysicEngine
+{
+
+    public static boolean checkviolation(Rechteck b1, Rechteck b2)
+    {
         double w = 0;
-        if (b1.x() < b2.x()) {
-            w = b1.w();
-        } else {
-            w = b2.w();
+        if (b1.bx() < b2.bx())
+        {
+            w = b1.bw();
+        }
+        else
+        {
+            w = b2.bw();
         }
 
-        if (Math.max(b1.x(), b2.x()) <= (Math.min(b1.x(), b2.x()) + w)) {
+        if (Math.max(b1.bx(), b2.bx()) <= (Math.min(b1.bx(), b2.bx()) + w))
+        {
             return checky(b1, b2);
-        } else {
+        }
+        else
+        {
             return false;
         }
     }
 
-    private static boolean checky(BoundingRechteck b1, BoundingRechteck b2) {
+    private static boolean checky(Rechteck b1, Rechteck b2)
+    {
         double h = 0;
-        if (b1.y() < b2.y()) {
-            h = b1.h();
-        } else {
-            h = b2.h();
+        if (b1.by() < b2.by())
+        {
+            h = b1.bh();
         }
-        if (Math.max(b1.y(), b2.y()) <= (Math.min(b1.y(), b2.y()) + h)) {
+        else
+        {
+            h = b2.bh();
+        }
+        if (Math.max(b1.by(), b2.by()) <= (Math.min(b1.by(), b2.by()) + h))
+        {
             return true;
-        } else {
+        }
+        else
+        {
             return false;
         }
     }
 
-    public static boolean checkviolation(BoundingKreis b1, BoundingKreis b2) {
-        double distance_a = Math.pow((double) (b2.x() - b1.x()), 2);
-        double distance_b = Math.pow((double) (b2.y() - b1.y()), 2);
-        if (Math.sqrt(distance_a + distance_b) <= (b1.r() + b2.r())) {
+    public static boolean checkviolation(Kreis b1, Kreis b2)
+    {
+        double distance_a = Math.pow((double) (b2.bx() - b1.bx()), 2);
+        double distance_b = Math.pow((double) (b2.by() - b1.by()), 2);
+        if (Math.sqrt(distance_a + distance_b) <= (b1.br() + b2.br()))
+        {
             return true;
-        } else {
+        }
+        else
+        {
             return false;
         }
     }
-
-    public static boolean checkviolation(BoundingRechteck b1, BoundingKreis b2) {
+    
+    public static boolean checkviolation(Rechteck b1, Kreis b2)
+    {
         return checkviolation(b2, b1);
     }
 
-    public static boolean checkviolation(BoundingKreis kreis, BoundingRechteck rechteck) {
-        if (kreis.x() >= rechteck.x()) {
+    public static boolean checkviolation(Kreis kreis, Rechteck rechteck)
+    {
+        if (kreis.bx() >= rechteck.bx())
+        {
             //rechts vom linken vertikalem Strich
-            if (kreis.x() <= (rechteck.x() + rechteck.w())) {
+            if (kreis.bx() <= (rechteck.bx() + rechteck.bw()))
+            {
                 //links vom rechten vertikalem Strich
-                if ((kreis.y() + kreis.r()) <= rechteck.y() || kreis.y() - kreis.r() >= rechteck.y() + rechteck.h()) {
+                if ((kreis.by() + kreis.br()) <= rechteck.by() || kreis.by() - kreis.br() >= rechteck.by() + rechteck.bh())
+                {
                     //Über der waagrechten Parallele über dem Rechteck oder unter der waagrechten Parallele unter dem Rechteck
                     return false;
-                } else {
+                }
+                else
+                {
                     //zwischen diesen Parallelen
                     return true;
                 }
-            } else {
+            }
+            else
+            {
                 //rechts vom rechten vertikalem Strich
-                if (kreis.y() >= rechteck.y()) {
+                if (kreis.by() >= rechteck.by())
+                {
                     //unter dem oberen horizontalem Strich
-                    if (kreis.y() <= rechteck.y() + rechteck.h()) {
+                    if (kreis.by() <= rechteck.by() + rechteck.bh())
+                    {
                         //über dem unteren horizontalem Strich
-                        if (rechteck.x() + rechteck.w() > kreis.x() - kreis.r()) {
+                        if (rechteck.bx() + rechteck.bw() > kreis.bx() - kreis.br())
+                        {
                             //links von der vertikalen Parallele rechts vom Rechteck
                             return true;
-                        } else {
+                        }
+                        else
+                        {
                             //rechts von dieser Parallele
                             return false;
                         }
-                    } else {
+                    }
+                    else
+                    {
                         //unter dem unteren horizontalem Strich
-                        BoundingKreis b3 = new BoundingKreis(rechteck.x() + rechteck.w(), rechteck.y() + rechteck.h(), 0);
+                        Kreis b3 = new Kreis(rechteck.bx() + rechteck.bw(), rechteck.by() + rechteck.bh(), 0);
                         return checkviolation(kreis, b3);
                     }
-                } else {
+                }
+                else
+                {
                     //über dem oberen horizontalem Strich
-                    BoundingKreis b3 = new BoundingKreis(rechteck.x() + rechteck.w(), rechteck.y(), 0);
+                    Kreis b3 = new Kreis(rechteck.bx() + rechteck.bw(), rechteck.by(), 0);
                     return checkviolation(kreis, b3);
                 }
             }
-        } else {
+        }
+        else
+        {
             //links vom linken vertikalem Strich
-            if (kreis.y() >= rechteck.y()) {
+            if (kreis.by() >= rechteck.by())
+            {
                 //unter dem oberem horizontalem Strich
-                if (kreis.y() <= rechteck.y() + rechteck.h()) {
+                if (kreis.by() <= rechteck.by() + rechteck.bh())
+                {
                     //über dem unterem horizontalem Strich
-                    if (rechteck.x() <= kreis.x() + kreis.r()) {
+                    if (rechteck.bx() <= kreis.bx() + kreis.br())
+                    {
                         //rechts von der vertikalen Parallele links vom Rechteck
                         return true;
-                    } else {
+                    }
+                    else
+                    {
                         //links von dieser Parallele
                         return false;
                     }
-                } else {
+                }
+                else
+                {
                     //unter dem unterem horizontalem Strich
-                    BoundingKreis b3 = new BoundingKreis(rechteck.x(), rechteck.y() + rechteck.h(), 0);
+                    Kreis b3 = new Kreis(rechteck.bx(), rechteck.by() + rechteck.bh(), 0);
                     return checkviolation(kreis, b3);
                 }
-            } else {
+            }
+            else
+            {
                 //über dem oberem horizontalem Strich
-                BoundingKreis b3 = new BoundingKreis(rechteck.x(), rechteck.y(), 0);
+                Kreis b3 = new Kreis(rechteck.bx(), rechteck.by(), 0);
                 return checkviolation(kreis, b3);
             }
         }
     }
 
-    public static boolean checkviolation(BoundingDreieck b1, BoundingKreis b2) {
+    public static boolean checkviolation(Dreieck b1, Kreis b2)
+    {
         return checkviolation(b2, b1);
     }
 
-    public static boolean checkviolation(BoundingKreis b1, BoundingDreieck b2) {
-        BoundingRechteck b3 = new BoundingRechteck(b2.x(), b2.y(), b2.w(), b2.h());
-        if (checkviolation(b1, b3) == false) {
+    public static boolean checkviolation(Kreis b1, Dreieck b2)
+    {
+        Rechteck b3 = new Rechteck(b2.bx(), b2.by(), b2.bw(), b2.bh());
+        if (checkviolation(b1, b3) == false)
+        {
             return false;
-        } else {
-            if (b2.type() == 'a') {
-                if (b1.y() + (b2.w() / Math.sqrt((b2.h()) * (b2.h()) + (b2.w()) * (b2.w()))) * b1.r() <= b2.y() + (b1.x() - (b2.h() / Math.sqrt((b2.h()) * (b2.h()) + (b2.w()) * (b2.w()))) * b1.r() - b2.x()) * (b2.h() / b2.w())) {
+        }
+        else
+        {
+            if (b2.btype() == 'a')
+            {
+                if (b1.by() + (b2.bw() / Math.sqrt((b2.bh()) * (b2.bh()) + (b2.bw()) * (b2.bw()))) * b1.br() <= b2.by() + (b1.bx() - (b2.bh() / Math.sqrt((b2.bh()) * (b2.bh()) + (b2.bw()) * (b2.bw()))) * b1.br() - b2.bx()) * (b2.bh() / b2.bw()))
+                {
                     return false;
-                } else {
+                }
+                else
+                {
                     return true;
                 }
-            } else if (b2.type() == 'b') {
-                if (b1.y() + (b2.w() / Math.sqrt((b2.w()) * (b2.w()) + (b2.h()) * (b2.h()))) * b1.r() <= b2.y() + b2.h() - (b1.x() + (b2.h() / Math.sqrt((b2.h()) * (b2.h()) + (b2.w()) * (b2.w()))) * b1.r() - b2.x()) * (b2.h() / b2.w())) {
+            }
+            else if (b2.btype() == 'b')
+            {
+                if (b1.by() + (b2.bw() / Math.sqrt((b2.bw()) * (b2.bw()) + (b2.bh()) * (b2.bh()))) * b1.br() <= b2.by() + b2.bh() - (b1.bx() + (b2.bh() / Math.sqrt((b2.bh()) * (b2.bh()) + (b2.bw()) * (b2.bw()))) * b1.br() - b2.bx()) * (b2.bh() / b2.bw()))
+                {
                     return false;
-                } else {
+                }
+                else
+                {
                     return true;
                 }
-            } else if (b2.type() == 'c') {
-                if (b1.y() - (b2.w() / Math.sqrt((b2.w()) * (b2.w()) + (b2.h()) * (b2.h()))) * b1.r() >= b2.y() + (b1.x() + (b2.h() / Math.sqrt((b2.h()) * (b2.h()) + (b2.w()) * (b2.w()))) * b1.r() - b2.x()) * (b2.h() / b2.w())) {
+            }
+            else if (b2.btype() == 'c')
+            {
+                if (b1.by() - (b2.bw() / Math.sqrt((b2.bw()) * (b2.bw()) + (b2.bh()) * (b2.bh()))) * b1.br() >= b2.by() + (b1.bx() + (b2.bh() / Math.sqrt((b2.bh()) * (b2.bh()) + (b2.bw()) * (b2.bw()))) * b1.br() - b2.bx()) * (b2.bh() / b2.bw()))
+                {
                     return false;
-                } else {
+                }
+                else
+                {
                     return true;
                 }
-            } else if (b2.type() == 'd') {
-                if (b1.y() - (b2.w() / Math.sqrt((b2.w()) * (b2.w()) + (b2.h()) * (b2.h()))) * b1.r() >= b2.y() + b2.h() - (b1.x() - (b2.h() / Math.sqrt((b2.h()) * (b2.h()) + (b2.w()) * (b2.w()))) * b1.r() - b2.x()) * (b2.h() / b2.w())) {
+            }
+            else if (b2.btype() == 'd')
+            {
+                if (b1.by() - (b2.bw() / Math.sqrt((b2.bw()) * (b2.bw()) + (b2.bh()) * (b2.bh()))) * b1.br() >= b2.by() + b2.bh() - (b1.bx() - (b2.bh() / Math.sqrt((b2.bh()) * (b2.bh()) + (b2.bw()) * (b2.bw()))) * b1.br() - b2.bx()) * (b2.bh() / b2.bw()))
+                {
                     return false;
-                } else {
+                }
+                else
+                {
                     return true;
                 }
-            } else {
+            }
+            else
+            {
                 return false;
             }
         }
     }
 
-    public static boolean checkviolation(BoundingDreieck b1, BoundingRechteck b2) {
+    public static boolean checkviolation(Dreieck b1, Rechteck b2)
+    {
         return checkviolation(b2, b1);
     }
 
-    public static boolean checkviolation(BoundingRechteck b1, BoundingDreieck b2) {
-        BoundingRechteck b3 = new BoundingRechteck(b2.x(), b2.y(), b2.w(), b2.h());
-        if (checkviolation(b1, b3) == false) {
+    public static boolean checkviolation(Rechteck b1, Dreieck b2)
+    {
+        Rechteck b3 = new Rechteck(b2.bx(), b2.by(), b2.bw(), b2.bh());
+        if (checkviolation(b1, b3) == false)
+        {
             return false;
-        } else {
-            if (b2.type() == 'a') {
-                if (b1.y() + b1.h() <= b2.y() + (b1.x() - b2.x()) * (b2.h() / b2.w())) {
+        }
+        else
+        {
+            if (b2.btype() == 'a')
+            {
+                if (b1.by() + b1.bh() <= b2.by() + (b1.bx() - b2.bx()) * (b2.bh() / b2.bw()))
+                {
                     return false;
-                } else {
+                }
+                else
+                {
                     return true;
                 }
-            } else if (b2.type() == 'b') {
-                if (b1.y() + b1.h() <= b2.y() + b2.h() - (b1.x() + b1.w() - b2.x()) * (b2.h() / b2.w())) {
+            }
+            else if (b2.btype() == 'b')
+            {
+                if (b1.by() + b1.bh() <= b2.by() + b2.bh() - (b1.bx() + b1.bw() - b2.bx()) * (b2.bh() / b2.bw()))
+                {
                     return false;
-                } else {
+                }
+                else
+                {
                     return true;
                 }
-            } else if (b2.type() == 'c') {
-                if (b1.y() >= b2.y() + (b1.x() + b1.w() - b2.x()) * (b2.h() / b2.w())) {
+            }
+            else if (b2.btype() == 'c')
+            {
+                if (b1.by() >= b2.by() + (b1.bx() + b1.bw() - b2.bx()) * (b2.bh() / b2.bw()))
+                {
                     return false;
-                } else {
+                }
+                else
+                {
                     return true;
                 }
-            } else if (b2.type() == 'd') {
-                if (b1.y() >= b2.y() + b2.h() - (b1.x() - b2.x()) * (b2.h() / b2.w())) {
+            }
+            else if (b2.btype() == 'd')
+            {
+                if (b1.by() >= b2.by() + b2.bh() - (b1.bx() - b2.bx()) * (b2.bh() / b2.bw()))
+                {
                     return false;
-                } else {
+                }
+                else
+                {
                     return true;
                 }
-            } else {
+            }
+            else
+            {
                 return false;
             }
         }
     }
 
-    public static boolean checkviolation(BoundingDreieck b1, BoundingDreieck b2) {
-        BoundingRechteck b3 = new BoundingRechteck(b1.x(), b1.y(), b1.w(), b1.h());
-        BoundingRechteck b4 = new BoundingRechteck(b2.x(), b2.y(), b2.w(), b2.h());
-        if (checkviolation(b3, b4) == true) {
-            if (b1.type() == 'a' && b2.type() == 'a') {
-                if (b1.y() <= b2.y() + b2.h()) {
+    public static boolean checkviolation(Dreieck b1, Dreieck b2)
+    {
+        Rechteck b3 = new Rechteck(b1.bx(), b1.by(), b1.bw(), b1.bh());
+        Rechteck b4 = new Rechteck(b2.bx(), b2.by(), b2.bw(), b2.bh());
+        if (checkviolation(b3, b4) == true)
+        {
+            if (b1.btype() == 'a' && b2.btype() == 'a')
+            {
+                if (b1.by() <= b2.by() + b2.bh())
+                {
                     return checkviolation(b3, b2);
-                } else {
+                }
+                else
+                {
                     return checkviolation(b4, b1);
                 }
-            } else if (b1.type() == 'b' && b2.type() == 'b') {
-                if (b1.y() <= b2.y() + b2.h()) {
+            }
+            else if (b1.btype() == 'b' && b2.btype() == 'b')
+            {
+                if (b1.by() <= b2.by() + b2.bh())
+                {
                     return checkviolation(b3, b2);
-                } else {
+                }
+                else
+                {
                     return checkviolation(b4, b1);
                 }
-            } else if (b1.type() == 'c' && b2.type() == 'c') {
-                if (b1.y() + b1.h() >= b2.y()) {
+            }
+            else if (b1.btype() == 'c' && b2.btype() == 'c')
+            {
+                if (b1.by() + b1.bh() >= b2.by())
+                {
                     return checkviolation(b3, b2);
-                } else {
+                }
+                else
+                {
                     return checkviolation(b4, b1);
                 }
-            } else if (b1.type() == 'd' && b2.type() == 'd') {
-                if (b1.y() + b1.h() >= b2.y()) {
+            }
+            else if (b1.btype() == 'd' && b2.btype() == 'd')
+            {
+                if (b1.by() + b1.bh() >= b2.by())
+                {
                     return checkviolation(b3, b2);
-                } else {
+                }
+                else
+                {
                     return checkviolation(b4, b1);
                 }
-            } else if (b1.type() == 'a' && b2.type() == 'b' || b1.type() == 'b' && b2.type() == 'a') {
-                if (b1.y() <= b2.y() + b2.h()) {
+            }
+            else if (b1.btype() == 'a' && b2.btype() == 'b' || b1.btype() == 'b' && b2.btype() == 'a')
+            {
+                if (b1.by() <= b2.by() + b2.bh())
+                {
                     return checkviolation(b3, b2);
-                } else {
+                }
+                else
+                {
                     return checkviolation(b1, b4);
                 }
-            } else if (b1.type() == 'a' && b2.type() == 'd' || b1.type() == 'd' && b2.type() == 'a') {
-                if (b1.x() < b2.x() + b2.w()) {
+            }
+            else if (b1.btype() == 'a' && b2.btype() == 'd' || b1.btype() == 'd' && b2.btype() == 'a')
+            {
+                if (b1.bx() < b2.bx() + b2.bw())
+                {
                     return checkviolation(b3, b2);
-                } else {
+                }
+                else
+                {
                     return checkviolation(b1, b4);
                 }
-            } else if (b1.type() == 'b' && b2.type() == 'c' || b1.type() == 'c' && b2.type() == 'b') {
-                if (b1.x() < b2.x() + b2.w()) {
+            }
+            else if (b1.btype() == 'b' && b2.btype() == 'c' || b1.btype() == 'c' && b2.btype() == 'b')
+            {
+                if (b1.bx() < b2.bx() + b2.bw())
+                {
                     return checkviolation(b3, b2);
-                } else {
+                }
+                else
+                {
                     return checkviolation(b1, b4);
                 }
-            } else if (b1.type() == 'c' && b2.type() == 'd' || b1.type() == 'd' && b2.type() == 'c') {
-                if (b1.y() > b2.y()) {
+            }
+            else if (b1.btype() == 'c' && b2.btype() == 'd' || b1.btype() == 'd' && b2.btype() == 'c')
+            {
+                if (b1.by() > b2.by())
+                {
                     return checkviolation(b3, b2);
-                } else {
+                }
+                else
+                {
                     return checkviolation(b1, b4);
                 }
-            } else if (b1.type() == 'a' && b2.type() == 'c') {
-                if ((b1.y() <= b2.y() + (b1.x() - b2.x()) * (b2.h() / b2.w())
-                        || b1.y() + b1.h() <= b2.y() + (b1.x() + b1.w() - b2.x()) * (b2.h() / b2.w()))
-                        && (b2.y() >= b1.y() + (b2.x() - b1.x()) * (b1.h() / b1.w())
-                        || b2.y() + b2.h() >= b1.y() + (b2.x() + b2.w() - b1.x()) * (b1.h() / b1.w()))) {
+            }
+            else if (b1.btype() == 'a' && b2.btype() == 'c')
+            {
+                if ((b1.by() <= b2.by() + (b1.bx() - b2.bx()) * (b2.bh() / b2.bw())
+                        || b1.by() + b1.bh() <= b2.by() + (b1.bx() + b1.bw() - b2.bx()) * (b2.bh() / b2.bw()))
+                        && (b2.by() >= b1.by() + (b2.bx() - b1.bx()) * (b1.bh() / b1.bw())
+                        || b2.by() + b2.bh() >= b1.by() + (b2.bx() + b2.bw() - b1.bx()) * (b1.bh() / b1.bw())))
+                {
                     return true;
-                } else {
+                }
+                else
+                {
                     return false;
                 }
-            } else if (b1.type() == 'c' && b2.type() == 'a') {
-                if ((b1.y() >= b2.y() + (b1.x() - b2.x()) * (b2.h() / b2.w())
-                        || b1.y() + b1.h() >= b2.y() + (b1.x() + b1.w() - b2.x()) * (b2.h() / b2.w()))
-                        && (b2.y() <= b1.y() + (b2.x() - b1.x()) * (b1.h() / b1.w())
-                        || b2.y() + b2.h() <= b1.y() + (b2.x() + b2.w() - b1.x()) * (b1.h() / b1.w()))) {
+            }
+            else if (b1.btype() == 'c' && b2.btype() == 'a')
+            {
+                if ((b1.by() >= b2.by() + (b1.bx() - b2.bx()) * (b2.bh() / b2.bw())
+                        || b1.by() + b1.bh() >= b2.by() + (b1.bx() + b1.bw() - b2.bx()) * (b2.bh() / b2.bw()))
+                        && (b2.by() <= b1.by() + (b2.bx() - b1.bx()) * (b1.bh() / b1.bw())
+                        || b2.by() + b2.bh() <= b1.by() + (b2.bx() + b2.bw() - b1.bx()) * (b1.bh() / b1.bw())))
+                {
                     return true;
-                } else {
+                }
+                else
+                {
                     return false;
                 }
-            } else if (b1.type() == 'b' && b2.type() == 'd') {
-                if ((b1.y() + b1.h() <= b2.y() + b2.h() - (b1.x() - b2.x()) * (b2.h() / b2.w())
-                        || b1.y() <= b2.y() - (b1.x() + b1.w() - b2.x()) * (b2.h() / b2.w()))
-                        && (b2.y() + b2.h() >= b1.y() + b1.h() - (b2.x() - b1.x()) * (b1.h() / b1.w())
-                        || b2.y() >= b1.y() - (b2.x() + b2.w() - b1.x()) * (b1.h() / b1.w()))) {
+            }
+            else if (b1.btype() == 'b' && b2.btype() == 'd')
+            {
+                if ((b1.by() + b1.bh() <= b2.by() + b2.bh() - (b1.bx() - b2.bx()) * (b2.bh() / b2.bw())
+                        || b1.by() <= b2.by() - (b1.bx() + b1.bw() - b2.bx()) * (b2.bh() / b2.bw()))
+                        && (b2.by() + b2.bh() >= b1.by() + b1.bh() - (b2.bx() - b1.bx()) * (b1.bh() / b1.bw())
+                        || b2.by() >= b1.by() - (b2.bx() + b2.bw() - b1.bx()) * (b1.bh() / b1.bw())))
+                {
                     return true;
-                } else {
+                }
+                else
+                {
                     return false;
                 }
-            } else if (b1.type() == 'd' && b2.type() == 'b') {
-                if ((b1.y() + b1.h() >= b2.y() + b2.h() - (b1.x() - b2.x()) * (b2.h() / b2.w())
-                        || b1.y() >= b2.y() - (b1.x() + b1.w() - b2.x()) * (b2.h() / b2.w()))
-                        && (b2.y() + b2.h() <= b1.y() + b1.h() - (b2.x() - b1.x()) * (b1.h() / b1.w())
-                        || b2.y() <= b1.y() - (b2.x() + b2.w() - b1.x()) * (b1.h() / b1.w()))) {
+            }
+            else if (b1.btype() == 'd' && b2.btype() == 'b')
+            {
+                if ((b1.by() + b1.bh() >= b2.by() + b2.bh() - (b1.bx() - b2.bx()) * (b2.bh() / b2.bw())
+                        || b1.by() >= b2.by() - (b1.bx() + b1.bw() - b2.bx()) * (b2.bh() / b2.bw()))
+                        && (b2.by() + b2.bh() <= b1.by() + b1.bh() - (b2.bx() - b1.bx()) * (b1.bh() / b1.bw())
+                        || b2.by() <= b1.by() - (b2.bx() + b2.bw() - b1.bx()) * (b1.bh() / b1.bw())))
+                {
                     return true;
-                } else {
+                }
+                else
+                {
                     return false;
                 }
-            } else {
+            }
+            else
+            {
                 return true;
             }
-        } else {
+        }
+        else
+        {
             return false;
         }
     }
 
-    public static boolean checkviolation(BoundingBox b1, BoundingBox b2) {
-        if (b1 instanceof BoundingKreis) {
-            BoundingKreis k1 = (BoundingKreis) b1;
-            if (b2 instanceof BoundingKreis) {
-                BoundingKreis k2 = (BoundingKreis) b2;
+    public static boolean checkviolation(OBJECT_2D b1, OBJECT_2D b2)
+    {
+        if (b1 instanceof Kreis)
+        {
+            Kreis k1 = (Kreis) b1;
+            if (b2 instanceof Kreis)
+            {
+                Kreis k2 = (Kreis) b2;
                 return PhysicEngine.checkviolation(k1, k2);
             }
-            if (b2 instanceof BoundingRechteck) {
-                BoundingRechteck k2 = (BoundingRechteck) b2;
+            if (b2 instanceof Rechteck)
+            {
+                Rechteck k2 = (Rechteck) b2;
                 return PhysicEngine.checkviolation(k1, k2);
             }
-            if (b2 instanceof BoundingDreieck) {
-                BoundingDreieck k2 = (BoundingDreieck) b2;
+            if (b2 instanceof Dreieck)
+            {
+                Dreieck k2 = (Dreieck) b2;
                 return PhysicEngine.checkviolation(k1, k2);
             }
-            if (b2 instanceof BoundingMouse) {
-                BoundingMouse k2 = (BoundingMouse) b2;
-                return PhysicEngine.checkviolation(k1, k2);
-            }
-        }
-        if (b1 instanceof BoundingRechteck) {
-            BoundingRechteck k1 = (BoundingRechteck) b1;
-            if (b2 instanceof BoundingKreis) {
-                BoundingKreis k2 = (BoundingKreis) b2;
-                return PhysicEngine.checkviolation(k1, k2);
-            }
-            if (b2 instanceof BoundingRechteck) {
-                BoundingRechteck k2 = (BoundingRechteck) b2;
-                return PhysicEngine.checkviolation(k1, k2);
-            }
-            if (b2 instanceof BoundingDreieck) {
-                BoundingDreieck k2 = (BoundingDreieck) b2;
-                return PhysicEngine.checkviolation(k1, k2);
-            }
-            if (b2 instanceof BoundingMouse) {
-                BoundingMouse k2 = (BoundingMouse) b2;
+            if (b2 instanceof Mouse)
+            {
+                Mouse k2 = (Mouse) b2;
                 return PhysicEngine.checkviolation(k1, k2);
             }
         }
-        if (b1 instanceof BoundingDreieck) {
-            BoundingDreieck k1 = (BoundingDreieck) b1;
-            if (b2 instanceof BoundingKreis) {
-                BoundingKreis k2 = (BoundingKreis) b2;
+        if (b1 instanceof Rechteck)
+        {
+            Rechteck k1 = (Rechteck) b1;
+            if (b2 instanceof Kreis)
+            {
+                Kreis k2 = (Kreis) b2;
                 return PhysicEngine.checkviolation(k1, k2);
             }
-            if (b2 instanceof BoundingRechteck) {
-                BoundingRechteck k2 = (BoundingRechteck) b2;
+            if (b2 instanceof Rechteck)
+            {
+                Rechteck k2 = (Rechteck) b2;
                 return PhysicEngine.checkviolation(k1, k2);
             }
-            if (b2 instanceof BoundingDreieck) {
-                BoundingDreieck k2 = (BoundingDreieck) b2;
+            if (b2 instanceof Dreieck)
+            {
+                Dreieck k2 = (Dreieck) b2;
                 return PhysicEngine.checkviolation(k1, k2);
             }
-            if (b2 instanceof BoundingMouse) {
-                BoundingMouse k2 = (BoundingMouse) b2;
+            if (b2 instanceof Mouse)
+            {
+                Mouse k2 = (Mouse) b2;
                 return PhysicEngine.checkviolation(k1, k2);
             }
         }
-        if (b1 instanceof BoundingMouse) {
-            BoundingMouse k1 = (BoundingMouse) b1;
-            if (b2 instanceof BoundingKreis) {
-                BoundingKreis k2 = (BoundingKreis) b2;
+        if (b1 instanceof Dreieck)
+        {
+            Dreieck k1 = (Dreieck) b1;
+            if (b2 instanceof Kreis)
+            {
+                Kreis k2 = (Kreis) b2;
                 return PhysicEngine.checkviolation(k1, k2);
             }
-            if (b2 instanceof BoundingRechteck) {
-                BoundingRechteck k2 = (BoundingRechteck) b2;
+            if (b2 instanceof Rechteck)
+            {
+                Rechteck k2 = (Rechteck) b2;
                 return PhysicEngine.checkviolation(k1, k2);
             }
-            if (b2 instanceof BoundingDreieck) {
-                BoundingDreieck k2 = (BoundingDreieck) b2;
+            if (b2 instanceof Dreieck)
+            {
+                Dreieck k2 = (Dreieck) b2;
                 return PhysicEngine.checkviolation(k1, k2);
             }
-            if (b2 instanceof BoundingMouse) {
-                BoundingMouse k2 = (BoundingMouse) b2;
+            if (b2 instanceof Mouse)
+            {
+                Mouse k2 = (Mouse) b2;
+                return PhysicEngine.checkviolation(k1, k2);
+            }
+        }
+        if (b1 instanceof Mouse)
+        {
+            Mouse k1 = (Mouse) b1;
+            if (b2 instanceof Kreis)
+            {
+                Kreis k2 = (Kreis) b2;
+                return PhysicEngine.checkviolation(k1, k2);
+            }
+            if (b2 instanceof Rechteck)
+            {
+                Rechteck k2 = (Rechteck) b2;
+                return PhysicEngine.checkviolation(k1, k2);
+            }
+            if (b2 instanceof Dreieck)
+            {
+                Dreieck k2 = (Dreieck) b2;
+                return PhysicEngine.checkviolation(k1, k2);
+            }
+            if (b2 instanceof Mouse)
+            {
+                Mouse k2 = (Mouse) b2;
                 return PhysicEngine.checkviolation(k1, k2);
             }
         }
         return false;
     }
 
-    public static boolean checkviolation(List<BoundingBox> b1, BoundingBox b2) {
-        for (BoundingBox bb : b1) {
-            if (PhysicEngine.checkviolation(bb, b2)) {
+    public static boolean checkviolation(List<OBJECT_2D> b1, OBJECT_2D b2)
+    {
+        for (OBJECT_2D bb : b1)
+        {
+            if (PhysicEngine.checkviolation(bb, b2))
+            {
                 return true;
             }
         }

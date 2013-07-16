@@ -224,4 +224,25 @@ public class Dreieck extends OBJECT_2D {
         glTexCoord2f(1, 0);
         glVertex2d(scbx + scw, scby);
     }
+    
+    //Boundingzeug
+    public int bh()
+    {
+        return (int) this.h;
+    }
+
+    public int bw()
+    {
+        return (int) this.w;
+    }
+    
+    public char btype()
+    {
+        return this.direction;
+    }
+    
+    public boolean schneidet(OBJECT_2D obj)
+    {
+        return PhysicEngine.checkviolation(obj, this);
+    }
 }
