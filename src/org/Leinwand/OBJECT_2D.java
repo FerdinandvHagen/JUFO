@@ -26,6 +26,7 @@ public abstract class OBJECT_2D
     protected boolean typetext = false;
     protected int rotation = 0;
     protected double transx, transy;
+    protected boolean sichtbar;
 
     //die abstrakten Methoden, die sich in jeder Klasse ändern
     public abstract void zeichnen(double factor);
@@ -61,13 +62,18 @@ public abstract class OBJECT_2D
         if (sicht)
         {
             t.addObject(this);
+            sichtbar=true;
         }
         else
         {
             t.removeObject(this);
+            sichtbar=false;
         }
     }
-
+    public boolean istSichtbar(){
+        return sichtbar;
+    }
+    
     public void setzeFarbe(float red, float green, float blue, float alpha)
     {
         colorrd = red;

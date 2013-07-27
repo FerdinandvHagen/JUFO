@@ -143,4 +143,7 @@ public class Text extends OBJECT_2D
     {
         return false;
     }
+    public String getText(){
+        return text;   
+    }
 }
