@@ -2,8 +2,6 @@
 package Editor;
 
 import org.Leinwand.*;
-import static Editor.Editor.einfacheingabe;
-import static Editor.Editor.mehrfacheingabe;
 import java.util.List;
 import java.util.ArrayList;
 import java.lang.Math;
@@ -56,7 +54,7 @@ public class Editor{
         if (lein.isKeyDown(Leinwand.KEY_S)) {
             mx1 = mx;
             my1 = my;
-            text.setText("Um einen Kreis zu malen, bestimme mit der Maus den Radius und drücke die K-Taste.\nUm ein Rechteck zu malen, bestimme mit der Maus die untere rechte Ecke und drücke die R-Taste.\nUm ein Dreieck zu malen, bestimme den zweiten Punkt der Hypothenose und drücke Die D-Taste.");
+            text.setText("Bestimme mit der Mausspitze den Radius und drücke 'K' für einen Kreis.\nBestimme mit der Maus die untere rechte Ecke und drücke 'R' für ein Rechteck.\nBestimme den zweiten Punkt der Hypothenose und drücke 'D' für ein Dreieck.");
             //text.setFontColor(java.awt.Color.RED);
             text.setzeSichtbarkeit(true);
         }
@@ -83,6 +81,7 @@ public class Editor{
             r.setzeSichtbarkeit(true);
             leinwand.redraw();
             memo=r;
+            text.setText("Um das Rechteck zu löschen, drücken sie die B-Taste.\nUm es zu speichern, drücken sie die A-Taste.");
         }
         if (lein.isKeyDown(Leinwand.KEY_D) && istGleich==false) {
             double w = mx - mx1;
@@ -94,6 +93,7 @@ public class Editor{
             d.setzeSichtbarkeit(true);
             leinwand.redraw();
             memo=d;
+            text.setText("Um das Dreieck zu löschen, drücken sie die B-Taste.\nUm es zu speichern, drücken sie die A-Taste.");
         }
         if(lein.isKeyDown(Leinwand.KEY_A)){
             if (memo==null){
@@ -104,6 +104,7 @@ public class Editor{
                 memo.setzeFarbe(farbe);
                 leinwand.redraw();
                 memo=null;
+                text.setText("Setze den Startpunkt an der Spitze der Maus mit der S-Taste.");
             }
         }
         if(lein.isKeyDown(Leinwand.KEY_B)&&!(memo==null)){
@@ -111,6 +112,7 @@ public class Editor{
             leinwand.redraw();
             memox=0;
             memoy=0;
+            text.setText("Setze den Startpunkt an der Spitze der Maus mit der S-Taste.");
         }
     }
     
