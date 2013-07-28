@@ -12,8 +12,8 @@ import javax.swing.JTextField;//für mehrfacheingabe
 
 
 
-public class Editor {
-    
+
+public class Editor{
     private Leinwand leinwand;
     private ArrayList<OBJECT_2D> List;
     private double mx1;
@@ -56,11 +56,9 @@ public class Editor {
         if (lein.isKeyDown(Leinwand.KEY_S)) {
             mx1 = mx;
             my1 = my;
-            text.setText("Um einen Kreis zu malen, bestimme mit der Maus den Radius und drücke die K-Taste./n Um ein Rechteck zu malen, bestimme mit der Maus die untere rechte Ecke und drücke die R-Taste./n Um ein Dreieck zu malen, bestimme den zweiten Punkt der Hypothenose und drücke Die D-Taste.");
+            text.setText("Um einen Kreis zu malen, bestimme mit der Maus den Radius und drücke die K-Taste.\nUm ein Rechteck zu malen, bestimme mit der Maus die untere rechte Ecke und drücke die R-Taste.\nUm ein Dreieck zu malen, bestimme den zweiten Punkt der Hypothenose und drücke Die D-Taste.");
             //text.setFontColor(java.awt.Color.RED);
             text.setzeSichtbarkeit(true);
-            //leinwand.redraw();
-            System.out.println(text.getText());
         }
         if (lein.isKeyDown(Leinwand.KEY_K)&&istGleich==false) {
             double x1=mx-mx1;
@@ -73,6 +71,7 @@ public class Editor {
             k.setzeSichtbarkeit(true);
             leinwand.redraw();
             memo=k;
+            text.setText("Um den Kreis zu löschen, drücken sie die B-Taste.\nUm ihn zu speichern, drücken sie die A-Taste.");
         }
         if (lein.isKeyDown(Leinwand.KEY_R) && istGleich==false) {
             double w = mx - mx1;
@@ -96,34 +95,29 @@ public class Editor {
             leinwand.redraw();
             memo=d;
         }
-                if(lein.isKeyDown(Leinwand.KEY_A)){
-                    if (memo==null){
-                    }
-                    else{ 
-                        //memo.setzeFarbe("schwarz");
-                        List.add(memo);
-                        List.add(d1);
-                        einfacheingabe();
-                        memo.setzeFarbe(farbe);
-                        mehrfacheingabe();
-                        leinwand.redraw();
-                    }
-                }
-                if(lein.isKeyDown(Leinwand.KEY_B)){
-                memo.setzeSichtbarkeit(false);
-                //d1.setzeSichtbarkeit(false);
-                leinwand.redraw();
-                memox=0;
-                memoy=0;
-                }
+        if(lein.isKeyDown(Leinwand.KEY_A)){
+            if (memo==null){
             }
+            else{ 
+                List.add(memo);
+                einfacheingabe("bla");
+                memo.setzeFarbe(farbe);
+                leinwand.redraw();
+                memo=null;
+            }
+        }
+        if(lein.isKeyDown(Leinwand.KEY_B)&&!(memo==null)){
+            memo.setzeSichtbarkeit(false);
+            leinwand.redraw();
+            memox=0;
+            memoy=0;
+        }
+    }
     
-    public static void einfacheingabe(){//um eine eingabe zu bekommen
+    public static void einfacheingabe(String bla){//um eine eingabe zu bekommen
  
                 // Aufruf der statischen Methode showMessageDialog()
-                farbe = JOptionPane.showInputDialog(null,"Geben Sie die gewünschte Farbe ein.",
-                                                             "Eine Eingabeaufforderung",
-                                                             JOptionPane.PLAIN_MESSAGE);
+                farbe = JOptionPane.showInputDialog(null,"Geben Sie die gewünschte Farbe ein.","Eine Eingabeaufforderung",JOptionPane.PLAIN_MESSAGE);
  
  
         }
@@ -136,6 +130,9 @@ public class Editor {
                 Object[] message = {"farbe", farb, "random", ran, "asd", ran2};
                 JOptionPane pane = new JOptionPane( message, JOptionPane.PLAIN_MESSAGE, JOptionPane.OK_CANCEL_OPTION);
                 pane.createDialog(null, "mehrfacheingabe").setVisible(true);
+
         }
+    
 }
+
     

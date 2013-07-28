@@ -25,10 +25,9 @@ public class EditorTest
     {
         Leinwand leinwand = Leinwand.gibLeinwand();
         //leinwand.setWindowSettings(480, 640, "", false);
-        leinwand.setWindowSettings(0, 0, "", true);
+        leinwand.setWindowSettings(450,720, "", false);
         //Diese Methode dauert später dann wahrscheinlich am längsten.
         Editor landscape = new Editor();
-
         long delta = 0;
 
         //DAS HIER IST NEU! TEXT IST JETZT EIN OBJEKT WIE ALLE ANDEREN AUCH
