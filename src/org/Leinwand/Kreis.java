@@ -92,6 +92,11 @@ public class Kreis extends OBJECT_2D {
         return (int)this.r;
     }
     
+    public void r(double r)
+    {
+        this.r = r;
+    }
+    
     public boolean schneidet(OBJECT_2D obj)
     {
         return PhysicEngine.checkviolation(obj, this);
