@@ -62,6 +62,17 @@ public class smalltest {
                     }
                 }
             }
+            if(lein.isKeyDown(Leinwand.KEY_D) && k == null)
+            {
+                for(Kreis kk : kreisList)
+                {
+                    if(mouse.schneidet(kk))
+                    {
+                        kk.setzeSichtbarkeit(false);
+                        kreisList.remove(kk);
+                    }
+                }
+            }
 
             lein.redraw();
         }
