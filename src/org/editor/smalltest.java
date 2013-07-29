@@ -70,6 +70,7 @@ public class smalltest {
                     {
                         kk.setzeSichtbarkeit(false);
                         kreisList.remove(kk);
+                        break;
                     }
                 }
             }
