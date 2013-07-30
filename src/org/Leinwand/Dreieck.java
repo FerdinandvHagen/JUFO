@@ -241,6 +241,23 @@ public class Dreieck extends OBJECT_2D {
         return this.direction;
     }
     
+    public double getYd()
+    {
+        return this.y;
+    }
+    
+    public double getXd()
+    {
+        return this.x;
+    }
+    
+    public void setzeW(double w){
+        this.w=w;
+    }
+    public void setzeH(double h){
+        this.h=h;
+    }
+    
     public boolean schneidet(OBJECT_2D obj)
     {
         return PhysicEngine.checkviolation(obj, this);
