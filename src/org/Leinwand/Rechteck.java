@@ -184,6 +184,7 @@ public class Rechteck extends OBJECT_2D
         this.h=h;
     }
     
+
     public boolean schneidet(OBJECT_2D obj)
     {
         return PhysicEngine.checkviolation(obj, this);

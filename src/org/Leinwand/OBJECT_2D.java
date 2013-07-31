@@ -27,6 +27,7 @@ public abstract class OBJECT_2D
     protected int rotation = 0;
     protected double transx, transy;
     protected boolean sichtbar;
+    protected String farbe;
 
     //die abstrakten Methoden, die sich in jeder Klasse ändern
     public abstract void zeichnen(double factor);
@@ -89,60 +90,70 @@ public abstract class OBJECT_2D
             colorgr = 0.0;
             colorrd = 0.0;
             colorbl = 1.0;
+            farbe="blau";
         }
         else if (farbe.equals("rot"))
         {
             colorgr = 0.0;
             colorrd = 1.0;
             colorbl = 0.0;
+            farbe="rot";
         }
         else if (farbe.equals("gruen"))
         {
             colorgr = 1.0;
             colorrd = 0.0;
             colorbl = 0.0;
+            farbe="gruen";
         }
         else if (farbe.equals("weiss"))
         {
             colorgr = 1.0;
             colorrd = 1.0;
             colorbl = 1.0;
+            farbe="weiss";
         }
         else if (farbe.equals("schwarz"))
         {
             colorgr = 0.0;
             colorrd = 0.0;
             colorbl = 0.0;
+            farbe="schwarz";
         }
         else if (farbe.equals("braun"))
         {
             colorgr = 0.27;
             colorrd = 0.55;
             colorbl = 0.07;
+            farbe="braun";
         }
         else if (farbe.equals("grau"))
         {
             colorgr = 0.53;
             colorrd = 0.466;
             colorbl = 0.60;
+            farbe="grau";
         }
         else if (farbe.equals("orange"))
         {
             colorgr = 0.65;
             colorrd = 1.0;
             colorbl = 0.0;
+            farbe="orange";
         }
         else if (farbe.equals("gelb"))
         {
             colorgr = 1.0;
             colorrd = 1.0;
             colorbl = 0.0;
+            farbe="gelb";
         }
         else if (farbe.equals("violett"))
         {
             colorgr = 0.51;
             colorrd = 0.93;
             colorbl = 0.93;
+            farbe="violett";
         }
         else
         {
@@ -158,6 +169,10 @@ public abstract class OBJECT_2D
         {
             alpha = 1.0;
         }
+    }
+    
+    public String getFarbe(){
+        return farbe;
     }
 
     public void setzeRotation(int winkel)

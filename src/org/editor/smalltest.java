@@ -12,6 +12,7 @@ import org.Leinwand.Rechteck;
 import org.Leinwand.Dreieck;
 import org.Leinwand.Leinwand;
 import org.Leinwand.Mouse;
+import org.Leinwand.OBJECT_2D;
 
 /**
  *
@@ -19,14 +20,49 @@ import org.Leinwand.Mouse;
  * ferdinand.vonhagen@altmuehlnet.de
  */
 public class smalltest {
-
-
+    
+        Rechteck blue=new Rechteck(165,15,15,15);
+        Rechteck white=new Rechteck(150,15,15,15);
+        Rechteck black=new Rechteck(150,30,15,15);
+        Rechteck red=new Rechteck(165,30,15,15);
+        Rechteck green=new Rechteck(180,15,15,15);
+        Rechteck brown=new Rechteck(195,15,15,15);
+        Rechteck orange=new Rechteck(195,30,15,15);
+        Rechteck yellow=new Rechteck(180,30,15,15);
+        Rechteck violett=new Rechteck(210,15,15,15);
+        Rechteck gray=new Rechteck(210,30,15,15);
+        Leinwand lein=Leinwand.gibLeinwand();
+        Mouse mouse = new Mouse();boolean canttouchthis=false;
+    
     public static void main(String[] args)
     {
         new smalltest();
     }
     
     public smalltest(){
+        
+        blue.setzeFarbe("blau");
+        blue.setzeSichtbarkeit(true);
+        white.setzeFarbe("weiss");
+        white.setzeSichtbarkeit(true);
+        black.setzeFarbe("schwarz");
+        black.setzeSichtbarkeit(true);
+        green.setzeFarbe("gruen");
+        green.setzeSichtbarkeit(true);
+        yellow.setzeFarbe("gelb");
+        yellow.setzeSichtbarkeit(true);
+        gray.setzeFarbe("grau");
+        gray.setzeSichtbarkeit(true);
+        orange.setzeFarbe("orange");
+        orange.setzeSichtbarkeit(true);
+        brown.setzeFarbe("braun");
+        brown.setzeSichtbarkeit(true);
+        violett.setzeFarbe("violett");
+        violett.setzeSichtbarkeit(true);
+        red.setzeFarbe("rot");
+        red.setzeSichtbarkeit(true);
+        
+        
         Dreieck dtest=new Dreieck(15,15,30,30);
         Rechteck rtest=new Rechteck (60,15,30,30);
         Kreis ktest=new Kreis (120,30,15); 
@@ -37,9 +73,8 @@ public class smalltest {
         rtest.setzeSichtbarkeit(true);
         dtest.setzeSichtbarkeit(true);
         char m='z';
-        boolean canttouchthis=false;
+        OBJECT_2D memo=null;
     
-        Leinwand lein = Leinwand.gibLeinwand();
         
         Kreis k = null;
         Rechteck r=null;
@@ -47,7 +82,6 @@ public class smalltest {
         List<Kreis> kreisList = new ArrayList<Kreis>();
         List<Rechteck> rechteckList=new ArrayList<Rechteck>();
         List<Dreieck> dreieckList=new ArrayList<Dreieck>();
-        Mouse mouse = new Mouse();
         while(!lein.checkCloseRequest())
         {
             if(mouse.schneidet(dtest)&&lein.isMouseKeyDown(Leinwand.MOUSE_KEY_LEFT)){
@@ -74,6 +108,7 @@ public class smalltest {
             else{
                 canttouchthis=true;
             }
+                //kreise:
                 if(lein.isMouseKeyDown(Leinwand.MOUSE_KEY_LEFT)&&k==null&&m=='k'&&canttouchthis==true)
                 {
                     k = new Kreis(lein.getCorrectedMouseX(), lein.getCorrectedMouseY(), 0);
@@ -123,9 +158,7 @@ public class smalltest {
                         }
                     }
                 }
-                
-                
-                
+                //rechtecke:
                 if(lein.isMouseKeyDown(Leinwand.MOUSE_KEY_LEFT)&&r==null&&m=='r'&&canttouchthis==true)
                 {
                     r = new Rechteck(lein.getCorrectedMouseX(), lein.getCorrectedMouseY(),0,0);
@@ -174,12 +207,7 @@ public class smalltest {
                         }
                     }
                 }
-            
-                
-                
-                
-                
-                
+                //dreiecke:
                 if(lein.isMouseKeyDown(Leinwand.MOUSE_KEY_LEFT)&&d==null&&m=='d'&&canttouchthis==true)
                 {
                     d = new Dreieck(lein.getCorrectedMouseX(), lein.getCorrectedMouseY(),0,0);
@@ -193,11 +221,45 @@ public class smalltest {
                 }
                 if(lein.isMouseKeyDown(Leinwand.MOUSE_KEY_RIGHT) && d!=null&&m=='d')
                 {
+                    canttouchthis=false;
                     d.setzeFarbe("schwarz");
                     dreieckList.add(d);
+                    //farbauswahl(d);
+                    memo=d;
                     d = null;
+                    
+                    System.out.println("asd");
                 }
-            
+                if(m=='d'&&memo!=null&&mouse.schneidet(blue)&&lein.isMouseKeyDown(Leinwand.MOUSE_KEY_RIGHT)){
+                    memo.setzeFarbe("blau");
+                }
+                if(m=='d'&&memo!=null&&mouse.schneidet(red)&&lein.isMouseKeyDown(Leinwand.MOUSE_KEY_RIGHT)){
+                    memo.setzeFarbe("rot");
+                }
+                if(m=='d'&&memo!=null&&mouse.schneidet(white)&&lein.isMouseKeyDown(Leinwand.MOUSE_KEY_RIGHT)){
+                    memo.setzeFarbe("weiss");
+                }
+                if(m=='d'&&memo!=null&&mouse.schneidet(black)&&lein.isMouseKeyDown(Leinwand.MOUSE_KEY_RIGHT)){
+                    memo.setzeFarbe("schwarz");
+                }
+                if(m=='d'&&memo!=null&&mouse.schneidet(green)&&lein.isMouseKeyDown(Leinwand.MOUSE_KEY_RIGHT)){
+                    memo.setzeFarbe("gruen");
+                }
+                if(m=='d'&&memo!=null&&mouse.schneidet(gray)&&lein.isMouseKeyDown(Leinwand.MOUSE_KEY_RIGHT)){
+                    memo.setzeFarbe("grau");
+                }
+                if(m=='d'&&memo!=null&&mouse.schneidet(orange)&&lein.isMouseKeyDown(Leinwand.MOUSE_KEY_RIGHT)){
+                    memo.setzeFarbe("orange");
+                }
+                if(m=='d'&&memo!=null&&mouse.schneidet(yellow)&&lein.isMouseKeyDown(Leinwand.MOUSE_KEY_RIGHT)){
+                    memo.setzeFarbe("gelb");
+                }
+                if(m=='d'&&memo!=null&&mouse.schneidet(violett)&&lein.isMouseKeyDown(Leinwand.MOUSE_KEY_RIGHT)){
+                    memo.setzeFarbe("violett");
+                }
+                if(m=='d'&&memo!=null&&mouse.schneidet(brown)&&lein.isMouseKeyDown(Leinwand.MOUSE_KEY_RIGHT)){
+                    memo.setzeFarbe("braun");
+                }
                 if(lein.isKeyDown(Leinwand.KEY_S) && d == null)
                 {
                     for(Dreieck dd : dreieckList)
@@ -235,5 +297,43 @@ public class smalltest {
                 
             lein.redraw();
         }
+    }
+
+    public void farbauswahl(OBJECT_2D obj){
+        while(!lein.isKeyDown(Leinwand.KEY_P)&&mouse.schneidet(obj)){
+            if(lein.isMouseKeyDown(Leinwand.MOUSE_KEY_LEFT)&&mouse.schneidet(blue)){
+                obj.setzeFarbe(blue.getFarbe());
+            }
+            if(lein.isMouseKeyDown(Leinwand.MOUSE_KEY_LEFT)&&mouse.schneidet(red)){
+                obj.setzeFarbe(red.getFarbe());
+            }
+            if(lein.isMouseKeyDown(Leinwand.MOUSE_KEY_LEFT)&&mouse.schneidet(black)){
+                obj.setzeFarbe(black.getFarbe());
+            }
+            if(lein.isMouseKeyDown(Leinwand.MOUSE_KEY_LEFT)&&mouse.schneidet(white)){
+                obj.setzeFarbe(white.getFarbe());
+            }
+            if(lein.isMouseKeyDown(Leinwand.MOUSE_KEY_LEFT)&&mouse.schneidet(green)){
+                obj.setzeFarbe(green.getFarbe());
+            }
+            if(lein.isMouseKeyDown(Leinwand.MOUSE_KEY_LEFT)&&mouse.schneidet(orange)){
+                obj.setzeFarbe(orange.getFarbe());
+            }
+            if(lein.isMouseKeyDown(Leinwand.MOUSE_KEY_LEFT)&&mouse.schneidet(brown)){
+                obj.setzeFarbe(brown.getFarbe());
+            }
+            if(lein.isMouseKeyDown(Leinwand.MOUSE_KEY_LEFT)&&mouse.schneidet(violett)){
+                obj.setzeFarbe(violett.getFarbe());
+            }
+            if(lein.isMouseKeyDown(Leinwand.MOUSE_KEY_LEFT)&&mouse.schneidet(gray)){
+                obj.setzeFarbe(gray.getFarbe());
+            }
+            if(lein.isMouseKeyDown(Leinwand.MOUSE_KEY_LEFT)&&mouse.schneidet(yellow)){
+                obj.setzeFarbe(yellow.getFarbe());
+            }
+            lein.redraw();
+        }
+        
+        System.out.println("bla");
     }
 }
