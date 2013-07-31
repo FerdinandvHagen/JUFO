@@ -14,6 +14,9 @@ import org.Leinwand.Leinwand;
 import org.Leinwand.Mouse;
 import org.Leinwand.OBJECT_2D;
 
+import javax.swing.JFileChooser;
+import java.io.File;
+
 /**
  *
  * @author Ferdinand von Hagen
@@ -123,8 +126,11 @@ public class smalltest {
                 }
                 if(lein.isMouseKeyDown(Leinwand.MOUSE_KEY_RIGHT) && k!=null&&m=='k')
                 {
+                    canttouchthis=false;
                     k.setzeFarbe("schwarz");
                     kreisList.add(k);
+                    //farbauswahl(d);
+                    memo=k;
                     k = null;
                 }
             
@@ -172,8 +178,11 @@ public class smalltest {
                 }
                 if(lein.isMouseKeyDown(Leinwand.MOUSE_KEY_RIGHT) && r!=null&&m=='r')
                 {
+                    canttouchthis=false;
                     r.setzeFarbe("schwarz");
                     rechteckList.add(r);
+                    //farbauswahl(d);
+                    memo=r;
                     r = null;
                 }
             
@@ -230,36 +239,50 @@ public class smalltest {
                     
                     System.out.println("asd");
                 }
-                if(m=='d'&&memo!=null&&mouse.schneidet(blue)&&lein.isMouseKeyDown(Leinwand.MOUSE_KEY_RIGHT)){
+                if(memo!=null&&mouse.schneidet(blue)&&lein.isMouseKeyDown(Leinwand.MOUSE_KEY_RIGHT)){
                     memo.setzeFarbe("blau");
                 }
-                if(m=='d'&&memo!=null&&mouse.schneidet(red)&&lein.isMouseKeyDown(Leinwand.MOUSE_KEY_RIGHT)){
+                if(memo!=null&&mouse.schneidet(red)&&lein.isMouseKeyDown(Leinwand.MOUSE_KEY_RIGHT)){
                     memo.setzeFarbe("rot");
                 }
-                if(m=='d'&&memo!=null&&mouse.schneidet(white)&&lein.isMouseKeyDown(Leinwand.MOUSE_KEY_RIGHT)){
+                if(memo!=null&&mouse.schneidet(white)&&lein.isMouseKeyDown(Leinwand.MOUSE_KEY_RIGHT)){
                     memo.setzeFarbe("weiss");
                 }
-                if(m=='d'&&memo!=null&&mouse.schneidet(black)&&lein.isMouseKeyDown(Leinwand.MOUSE_KEY_RIGHT)){
+                if(memo!=null&&mouse.schneidet(black)&&lein.isMouseKeyDown(Leinwand.MOUSE_KEY_RIGHT)){
                     memo.setzeFarbe("schwarz");
                 }
-                if(m=='d'&&memo!=null&&mouse.schneidet(green)&&lein.isMouseKeyDown(Leinwand.MOUSE_KEY_RIGHT)){
+                if(memo!=null&&mouse.schneidet(green)&&lein.isMouseKeyDown(Leinwand.MOUSE_KEY_RIGHT)){
                     memo.setzeFarbe("gruen");
                 }
-                if(m=='d'&&memo!=null&&mouse.schneidet(gray)&&lein.isMouseKeyDown(Leinwand.MOUSE_KEY_RIGHT)){
+                if(memo!=null&&mouse.schneidet(gray)&&lein.isMouseKeyDown(Leinwand.MOUSE_KEY_RIGHT)){
                     memo.setzeFarbe("grau");
                 }
-                if(m=='d'&&memo!=null&&mouse.schneidet(orange)&&lein.isMouseKeyDown(Leinwand.MOUSE_KEY_RIGHT)){
+                if(memo!=null&&mouse.schneidet(orange)&&lein.isMouseKeyDown(Leinwand.MOUSE_KEY_RIGHT)){
                     memo.setzeFarbe("orange");
                 }
-                if(m=='d'&&memo!=null&&mouse.schneidet(yellow)&&lein.isMouseKeyDown(Leinwand.MOUSE_KEY_RIGHT)){
+                if(memo!=null&&mouse.schneidet(yellow)&&lein.isMouseKeyDown(Leinwand.MOUSE_KEY_RIGHT)){
                     memo.setzeFarbe("gelb");
                 }
-                if(m=='d'&&memo!=null&&mouse.schneidet(violett)&&lein.isMouseKeyDown(Leinwand.MOUSE_KEY_RIGHT)){
+                if(memo!=null&&mouse.schneidet(violett)&&lein.isMouseKeyDown(Leinwand.MOUSE_KEY_RIGHT)){
                     memo.setzeFarbe("violett");
                 }
-                if(m=='d'&&memo!=null&&mouse.schneidet(brown)&&lein.isMouseKeyDown(Leinwand.MOUSE_KEY_RIGHT)){
+                if(memo!=null&&mouse.schneidet(brown)&&lein.isMouseKeyDown(Leinwand.MOUSE_KEY_RIGHT)){
                     memo.setzeFarbe("braun");
                 }
+                if(lein.isKeyDown(Leinwand.KEY_T)&&r==null){
+                    for(Rechteck rr:rechteckList){
+                        if(mouse.schneidet(rr)){
+                            String a=getTexturePath();
+                            System.out.println(a);
+                            rr.ladeTextur(a);
+                        }
+                    }
+                    
+                }
+                
+                
+                
+                
                 if(lein.isKeyDown(Leinwand.KEY_S) && d == null)
                 {
                     for(Dreieck dd : dreieckList)
@@ -335,5 +358,19 @@ public class smalltest {
         }
         
         System.out.println("bla");
+    }
+    public String getTexturePath(){
+        JFileChooser chooser = new JFileChooser();
+        int rueckgabeWert = chooser.showOpenDialog(null);
+        
+        if(rueckgabeWert == JFileChooser.APPROVE_OPTION){
+            File a=chooser.getSelectedFile();
+            System.out.println(a.getName());
+            return a.getName();
+            
+        }
+        else{
+            return null;
+        }
     }
 }
