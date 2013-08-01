@@ -5,6 +5,7 @@
 
 package org.editor;
 
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 import org.Leinwand.Kreis;
@@ -16,6 +17,8 @@ import org.Leinwand.OBJECT_2D;
 
 import javax.swing.JFileChooser;
 import java.io.File;
+import javax.swing.JColorChooser;
+import javax.swing.JFrame;
 
 /**
  *
@@ -24,16 +27,7 @@ import java.io.File;
  */
 public class smalltest {
     
-        Rechteck blue=new Rechteck(165,15,15,15);
-        Rechteck white=new Rechteck(150,15,15,15);
-        Rechteck black=new Rechteck(150,30,15,15);
-        Rechteck red=new Rechteck(165,30,15,15);
-        Rechteck green=new Rechteck(180,15,15,15);
-        Rechteck brown=new Rechteck(195,15,15,15);
-        Rechteck orange=new Rechteck(195,30,15,15);
-        Rechteck yellow=new Rechteck(180,30,15,15);
-        Rechteck violett=new Rechteck(210,15,15,15);
-        Rechteck gray=new Rechteck(210,30,15,15);
+
         Leinwand lein=Leinwand.gibLeinwand();
         Mouse mouse = new Mouse();boolean canttouchthis=false;
     
@@ -44,26 +38,6 @@ public class smalltest {
     
     public smalltest(){
         
-        blue.setzeFarbe("blau");
-        blue.setzeSichtbarkeit(true);
-        white.setzeFarbe("weiss");
-        white.setzeSichtbarkeit(true);
-        black.setzeFarbe("schwarz");
-        black.setzeSichtbarkeit(true);
-        green.setzeFarbe("gruen");
-        green.setzeSichtbarkeit(true);
-        yellow.setzeFarbe("gelb");
-        yellow.setzeSichtbarkeit(true);
-        gray.setzeFarbe("grau");
-        gray.setzeSichtbarkeit(true);
-        orange.setzeFarbe("orange");
-        orange.setzeSichtbarkeit(true);
-        brown.setzeFarbe("braun");
-        brown.setzeSichtbarkeit(true);
-        violett.setzeFarbe("violett");
-        violett.setzeSichtbarkeit(true);
-        red.setzeFarbe("rot");
-        red.setzeSichtbarkeit(true);
         
         
         Dreieck dtest=new Dreieck(15,15,30,30);
@@ -129,8 +103,8 @@ public class smalltest {
                     canttouchthis=false;
                     k.setzeFarbe("schwarz");
                     kreisList.add(k);
-                    //farbauswahl(d);
                     memo=k;
+                    getColor(k);
                     k = null;
                 }
             
@@ -164,6 +138,9 @@ public class smalltest {
                         }
                     }
                 }
+                
+                
+                
                 //rechtecke:
                 if(lein.isMouseKeyDown(Leinwand.MOUSE_KEY_LEFT)&&r==null&&m=='r'&&canttouchthis==true)
                 {
@@ -181,8 +158,8 @@ public class smalltest {
                     canttouchthis=false;
                     r.setzeFarbe("schwarz");
                     rechteckList.add(r);
-                    //farbauswahl(d);
                     memo=r;
+                    getColor(r);
                     r = null;
                 }
             
@@ -216,6 +193,9 @@ public class smalltest {
                         }
                     }
                 }
+                
+                
+                
                 //dreiecke:
                 if(lein.isMouseKeyDown(Leinwand.MOUSE_KEY_LEFT)&&d==null&&m=='d'&&canttouchthis==true)
                 {
@@ -233,41 +213,9 @@ public class smalltest {
                     canttouchthis=false;
                     d.setzeFarbe("schwarz");
                     dreieckList.add(d);
-                    //farbauswahl(d);
                     memo=d;
+                    getColor(d);
                     d = null;
-                    
-                    System.out.println("asd");
-                }
-                if(memo!=null&&mouse.schneidet(blue)&&lein.isMouseKeyDown(Leinwand.MOUSE_KEY_RIGHT)){
-                    memo.setzeFarbe("blau");
-                }
-                if(memo!=null&&mouse.schneidet(red)&&lein.isMouseKeyDown(Leinwand.MOUSE_KEY_RIGHT)){
-                    memo.setzeFarbe("rot");
-                }
-                if(memo!=null&&mouse.schneidet(white)&&lein.isMouseKeyDown(Leinwand.MOUSE_KEY_RIGHT)){
-                    memo.setzeFarbe("weiss");
-                }
-                if(memo!=null&&mouse.schneidet(black)&&lein.isMouseKeyDown(Leinwand.MOUSE_KEY_RIGHT)){
-                    memo.setzeFarbe("schwarz");
-                }
-                if(memo!=null&&mouse.schneidet(green)&&lein.isMouseKeyDown(Leinwand.MOUSE_KEY_RIGHT)){
-                    memo.setzeFarbe("gruen");
-                }
-                if(memo!=null&&mouse.schneidet(gray)&&lein.isMouseKeyDown(Leinwand.MOUSE_KEY_RIGHT)){
-                    memo.setzeFarbe("grau");
-                }
-                if(memo!=null&&mouse.schneidet(orange)&&lein.isMouseKeyDown(Leinwand.MOUSE_KEY_RIGHT)){
-                    memo.setzeFarbe("orange");
-                }
-                if(memo!=null&&mouse.schneidet(yellow)&&lein.isMouseKeyDown(Leinwand.MOUSE_KEY_RIGHT)){
-                    memo.setzeFarbe("gelb");
-                }
-                if(memo!=null&&mouse.schneidet(violett)&&lein.isMouseKeyDown(Leinwand.MOUSE_KEY_RIGHT)){
-                    memo.setzeFarbe("violett");
-                }
-                if(memo!=null&&mouse.schneidet(brown)&&lein.isMouseKeyDown(Leinwand.MOUSE_KEY_RIGHT)){
-                    memo.setzeFarbe("braun");
                 }
                 if(lein.isKeyDown(Leinwand.KEY_T)&&r==null){
                     for(Rechteck rr:rechteckList){
@@ -277,7 +225,14 @@ public class smalltest {
                             rr.ladeTextur(a);
                         }
                     }
-                    
+                }if(lein.isKeyDown(Leinwand.KEY_T)&&d==null){
+                    for(Dreieck dd:dreieckList){
+                        if(mouse.schneidet(dd)){
+                            String a=getTexturePath();
+                            System.out.println(a);
+                            dd.ladeTextur(a);
+                        }
+                    }
                 }
                 
                 
@@ -322,55 +277,25 @@ public class smalltest {
         }
     }
 
-    public void farbauswahl(OBJECT_2D obj){
-        while(!lein.isKeyDown(Leinwand.KEY_P)&&mouse.schneidet(obj)){
-            if(lein.isMouseKeyDown(Leinwand.MOUSE_KEY_LEFT)&&mouse.schneidet(blue)){
-                obj.setzeFarbe(blue.getFarbe());
-            }
-            if(lein.isMouseKeyDown(Leinwand.MOUSE_KEY_LEFT)&&mouse.schneidet(red)){
-                obj.setzeFarbe(red.getFarbe());
-            }
-            if(lein.isMouseKeyDown(Leinwand.MOUSE_KEY_LEFT)&&mouse.schneidet(black)){
-                obj.setzeFarbe(black.getFarbe());
-            }
-            if(lein.isMouseKeyDown(Leinwand.MOUSE_KEY_LEFT)&&mouse.schneidet(white)){
-                obj.setzeFarbe(white.getFarbe());
-            }
-            if(lein.isMouseKeyDown(Leinwand.MOUSE_KEY_LEFT)&&mouse.schneidet(green)){
-                obj.setzeFarbe(green.getFarbe());
-            }
-            if(lein.isMouseKeyDown(Leinwand.MOUSE_KEY_LEFT)&&mouse.schneidet(orange)){
-                obj.setzeFarbe(orange.getFarbe());
-            }
-            if(lein.isMouseKeyDown(Leinwand.MOUSE_KEY_LEFT)&&mouse.schneidet(brown)){
-                obj.setzeFarbe(brown.getFarbe());
-            }
-            if(lein.isMouseKeyDown(Leinwand.MOUSE_KEY_LEFT)&&mouse.schneidet(violett)){
-                obj.setzeFarbe(violett.getFarbe());
-            }
-            if(lein.isMouseKeyDown(Leinwand.MOUSE_KEY_LEFT)&&mouse.schneidet(gray)){
-                obj.setzeFarbe(gray.getFarbe());
-            }
-            if(lein.isMouseKeyDown(Leinwand.MOUSE_KEY_LEFT)&&mouse.schneidet(yellow)){
-                obj.setzeFarbe(yellow.getFarbe());
-            }
-            lein.redraw();
-        }
-        
-        System.out.println("bla");
-    }
     public String getTexturePath(){
         JFileChooser chooser = new JFileChooser();
         int rueckgabeWert = chooser.showOpenDialog(null);
         
         if(rueckgabeWert == JFileChooser.APPROVE_OPTION){
             File a=chooser.getSelectedFile();
-            System.out.println(a.getName());
-            return a.getName();
+            System.out.println(a.getAbsolutePath());
+            return a.getAbsolutePath();
             
         }
         else{
             return null;
         }
+    }
+    public void getColor(OBJECT_2D obj){
+        JFrame guiFrame = new JFrame();
+            Color selectedColor = JColorChooser.showDialog(guiFrame, "Pick a Color", Color.GREEN);
+            obj.setzeFarbe(selectedColor.getRed(),selectedColor.getGreen(),selectedColor.getBlue(),selectedColor.getAlpha());
+            System.out.println(selectedColor.getRed()+"  "+selectedColor.getGreen()+"  "+selectedColor.getBlue());
+            guiFrame.dispose();
     }
 }
