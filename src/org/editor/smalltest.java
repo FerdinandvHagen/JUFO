@@ -294,7 +294,7 @@ public class smalltest {
     public void getColor(OBJECT_2D obj){
         JFrame guiFrame = new JFrame();
             Color selectedColor = JColorChooser.showDialog(guiFrame, "Pick a Color", Color.GREEN);
-            obj.setzeFarbe(selectedColor.getRed(),selectedColor.getGreen(),selectedColor.getBlue(),selectedColor.getAlpha());
+            obj.setzeFarbe((float)(selectedColor.getRed()/255.0),(float)(selectedColor.getGreen()/255.0),(float)(selectedColor.getBlue()/255.0),selectedColor.getAlpha());
             System.out.println(selectedColor.getRed()+"  "+selectedColor.getGreen()+"  "+selectedColor.getBlue());
             guiFrame.dispose();
     }
