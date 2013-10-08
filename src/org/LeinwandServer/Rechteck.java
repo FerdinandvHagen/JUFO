@@ -2,10 +2,10 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.Leinwand;
+package org.LeinwandServer;
 
+//import org.TextureListServer.Texture;
 import static org.lwjgl.opengl.GL11.*;
-import org.newdawn.slick.opengl.Texture;
 
 /**
  *
@@ -15,7 +15,7 @@ public class Rechteck extends OBJECT_2D
 {
 
     private double w, h;
-    private Texture textur;
+    //private Texture textur;
     private int scalex, scaley;
 
     public Rechteck(int x, int y, int w, int h)
@@ -46,6 +46,7 @@ public class Rechteck extends OBJECT_2D
     {
         this.scalex = x;
         this.scaley = y;
+        update();
     }
 
     public void zeichnen(double factor)
@@ -67,7 +68,7 @@ public class Rechteck extends OBJECT_2D
         }
 
         //Hier wird das Objekt gezeichnet
-        if (textur == null)
+        //if (textur == null)
         {
             glColor4d(colorrd, colorgr, colorbl, alpha);
             glBegin(GL_QUADS);
@@ -77,12 +78,12 @@ public class Rechteck extends OBJECT_2D
             glVertex2d(pointx, pointy + h);
             glEnd();
         }
-        else
+        /*else
         {
             glColor4d(1f, 1f, 1f, 1f);
             glDisable(GL_TEXTURE_2D);
             glEnable(GL_TEXTURE_2D);
-            textur.bind();
+            //textur.bind();
             glBegin(GL_TRIANGLES);
 
             double scw = this.w / this.scalex;
@@ -110,7 +111,7 @@ public class Rechteck extends OBJECT_2D
             }
             glEnd();
             glDisable(GL_TEXTURE_2D);
-        }
+        }*/
         if (rotation != 0)
         {
             processTranslationsTwo();
@@ -121,11 +122,13 @@ public class Rechteck extends OBJECT_2D
     {
         this.x = x;
         this.y = y;
+        update();
     }
 
     public void ladeTextur(String textur)
     {
-        this.textur = Leinwand.gibLeinwand().loadTexture(textur);
+        //this.textur = Leinwand.gibLeinwand().loadTexture(textur);
+        update();
     }
 
     public double getXd()
@@ -181,9 +184,11 @@ public class Rechteck extends OBJECT_2D
 
     public void setzeW(double w){
         this.w=w;
+        update();
     }
     public void setzeH(double h){
         this.h=h;
+        update();
     }
     
 

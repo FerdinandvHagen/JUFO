@@ -1,4 +1,4 @@
-package org.Leinwand;
+package org.LeinwandServer;
 
 import java.awt.image.BufferedImage;
 import org.lwjgl.LWJGLException;
@@ -29,20 +29,21 @@ import org.lwjgl.opengl.GL11;
  * @author Ferdinand von Hagen
  * @version 1.1
  */
-public class Leinwand
+public class LeinwandServer
 {
 
     LeinwandData data;
+
     public void setLeinwandData(LeinwandData data)
     {
-        this.data = data;
+        //this.data = data;
     }
     //Singleton ist das erste Objekt der Klasse Leinwand
     //Hier können andere Objekte eine Instanz von Leinwand abrufen
     //und bekommen ein Handle
-    public static Leinwand leinwandSingleton;
+    public static LeinwandServer leinwandSingleton;
 
-    private Leinwand()
+    private LeinwandServer()
     {
         data = new LeinwandData();
         create();
@@ -53,11 +54,11 @@ public class Leinwand
      *
      * @return eine geöffnete Leinwand.
      */
-    public static Leinwand gibLeinwand()
+    public static LeinwandServer gibLeinwand()
     {
         if (leinwandSingleton == null)
         {
-            leinwandSingleton = new Leinwand();
+            leinwandSingleton = new LeinwandServer();
             System.out.println("Leinwand created");
             return leinwandSingleton;
         }
@@ -119,12 +120,11 @@ public class Leinwand
         this.data.textList = new ArrayList<OBJECT_2D>();
         createDisplay();
     }
-    
+
     private void createDisplay()
     {
         try
         {
-            AL.create();
             // Setze die Höhe udn Breite des Displays, den Titel und erstellt es
             if (this.data.fullscreen)
             {
@@ -175,10 +175,10 @@ public class Leinwand
     public void close()
     {
         //Delete all textures
-        this.data.textureList.destroy();
+        //this.data.textureList.destroy();
         //Destroy the Display
         Display.destroy();
-        AL.destroy();
+        this.leinwandSingleton = null;
     }
 
     /**
@@ -191,17 +191,38 @@ public class Leinwand
         if (add.isBackground())
         {
             //Das Objekt ist für den Hintergrund e.g. für die Landschaft bestimmt
-            this.data.background_objects.remove(add);
+            for (OBJECT_2D obj : this.data.background_objects)
+            {
+                if (obj.uniqueid == add.uniqueid)
+                {
+                    this.data.background_objects.remove(obj);
+                    break;
+                }
+            }
             this.data.background_objects.add(add);
         }
         if (add.isText())
         {
-            this.data.textList.remove(add);    //entferne die Figur, falls vorhanden
+            for (OBJECT_2D obj : this.data.textList)
+            {
+                if (obj.uniqueid == add.uniqueid)
+                {
+                    this.data.textList.remove(obj);
+                    break;
+                }
+            }
             this.data.textList.add(add);       //neu anfügen
         }
         if (!add.isBackground() && !add.isText())
         {
-            this.data.objects.remove(add);
+            for (OBJECT_2D obj : this.data.objects)
+            {
+                if (obj.uniqueid == add.uniqueid)
+                {
+                    this.data.objects.remove(obj);
+                    break;
+                }
+            }
             this.data.objects.add(add);
         }
     }
@@ -223,11 +244,11 @@ public class Leinwand
      */
     public void redraw()
     {
-        if (this.isKeyDown(this.KEY_LCONTROL) && this.isKeyDown(this.KEY_S))
-        {
-            this.data.screenshotcounter++;
-            this.takeScreenshot("screenshot" + this.data.screenshotcounter + ".jpg");
-        }
+        /**
+         * if (this.isKeyDown(this.KEY_LCONTROL) && this.isKeyDown(this.KEY_S))
+         * { this.data.screenshotcounter++; this.takeScreenshot("screenshot" +
+         * this.data.screenshotcounter + ".jpg"); }
+         */
         if (Display.isCloseRequested())
         {
             this.data.iscloserequested = true;
@@ -261,7 +282,7 @@ public class Leinwand
                 Display.sync(this.data.fpslimit);
             }
         }
-        
+
         //FPS berechnen
         this.data.elapsed = System.nanoTime() - this.data.lastNanoTime;
         this.data.fps = 1000000000 / this.data.elapsed;
@@ -375,11 +396,10 @@ public class Leinwand
      * @param texture String mit Pfad zur Textur.
      * @return Eine geladene Textur.
      */
-    public Texture loadTexture(String texture)
-    {
-        return this.data.textureList.loadTexture(texture);
-    }
-
+    /*public Texture loadTexture(String texture)
+     {
+     return this.data.textureList.loadTexture(texture);
+     }*/
     /**
      * Verschiebt das Bild anhand der Eingaben der Pfeiltasten. Nützlich für
      * Übungen, Test, ...
@@ -542,7 +562,6 @@ public class Leinwand
         Thread s = new Thread(rs, "saving Screenshot");
         s.start();
     }
-    
     //Key Definitions
     public static final int EVENT_SIZE = 18;
     public static final int CHAR_NONE = 0;

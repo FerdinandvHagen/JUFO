@@ -2,24 +2,17 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.Leinwand;
+package org.LeinwandServer;
 
-import java.util.List;
+import java.io.Serializable;
 import static org.lwjgl.opengl.GL11.*;
 /**
  *
  * @author ADMIN
  */
-public abstract class OBJECT_2D
+public abstract class OBJECT_2D implements Serializable
 {
-
-    private Leinwand lein;
-
-    public OBJECT_2D()
-    {
-        lein = Leinwand.gibLeinwand();
-    }
-    
+    public long uniqueid;
     //Variablendeklaration, die überall gleich ist
     protected double x, y;
     protected double colorgr, colorrd, colorbl, alpha;
@@ -29,12 +22,16 @@ public abstract class OBJECT_2D
     protected double transx, transy;
     protected boolean sichtbar;
     protected String farbe;
+    
+    public OBJECT_2D()
+    {
+        uniqueid = 0;
+    }
 
     //die abstrakten Methoden, die sich in jeder Klasse ändern
     public abstract void zeichnen(double factor);
 
     public abstract void bewegen(int x, int y);
-    
     //jetzt allgemeine Methoden, die wir immer brauchen
 
     public double x()
@@ -51,28 +48,34 @@ public abstract class OBJECT_2D
     {
         this.x = this.x + x;
         this.y = this.y + y;
+        update();
     }
 
     public void relbewegen(double x, double y)
     {
         this.x = this.x + x;
         this.y = this.y + y;
+        update();
     }
 
     public void setzeSichtbarkeit(boolean sicht)
     {
-        Leinwand t = Leinwand.gibLeinwand();
         if (sicht)
         {
-            t.addObject(this);
+            Leinwand.gibLeinwand().addObject(this);
             sichtbar=true;
         }
         else
         {
-            t.removeObject(this);
+            Leinwand.gibLeinwand().removeObject(this);
             sichtbar=false;
         }
     }
+    public void setX(int x)
+    {
+        this.x = x;
+    }
+    
     public boolean istSichtbar(){
         return sichtbar;
     }
@@ -83,6 +86,7 @@ public abstract class OBJECT_2D
         colorgr = green;
         colorbl = blue;
         this.alpha = alpha;
+        update();
     }
 
     public void setzeFarbe(String farbe)
@@ -171,6 +175,7 @@ public abstract class OBJECT_2D
         {
             alpha = 1.0;
         }
+        update();
     }
     
     public String getFarbe(){
@@ -180,11 +185,13 @@ public abstract class OBJECT_2D
     public void setzeRotation(int winkel)
     {
         this.rotation = winkel;
+        update();
     }
 
     public void setzeAlsHintergrund()
     {
         background = true;
+        update();
     }
     
     public boolean isBackground()
@@ -195,6 +202,7 @@ public abstract class OBJECT_2D
     public void setzeAlsText()
     {
         typetext = true;
+        update();
     }
     
     public boolean isText()
@@ -228,6 +236,11 @@ public abstract class OBJECT_2D
     public int by()
     {
         return (int)this.y;
+    }
+    
+    public void update()
+    {
+        Leinwand.gibLeinwand().addObject(this);
     }
     
     public abstract boolean schneidet(OBJECT_2D obj);

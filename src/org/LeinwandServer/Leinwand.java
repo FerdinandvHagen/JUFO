@@ -1,25 +1,17 @@
-package org.Leinwand;
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package org.LeinwandServer;
 
-import java.awt.image.BufferedImage;
-import org.lwjgl.LWJGLException;
-import org.lwjgl.input.Keyboard;
-import org.lwjgl.input.Mouse;
-import org.lwjgl.opengl.Display;
-import org.lwjgl.opengl.DisplayMode;
-
-import java.util.ArrayList;
-
-import java.io.File;
 import java.io.IOException;
-import java.nio.ByteBuffer;
-import javax.imageio.ImageIO;
-
-import static org.lwjgl.opengl.GL11.*;
-import org.newdawn.slick.opengl.Texture;
-
-import org.lwjgl.BufferUtils;
-import org.lwjgl.openal.AL;
-import org.lwjgl.opengl.GL11;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.Socket;
+import java.net.UnknownHostException;
+import java.util.ArrayList;
+import org.lwjgl.input.Keyboard;
+//import org.newdawn.slick.opengl.Texture;
 
 /**
  * Adaption der bekannten Java-Leinwand-Implementationen auf openGL. Sie
@@ -36,15 +28,41 @@ public class Leinwand
     public void setLeinwandData(LeinwandData data)
     {
         this.data = data;
+        try
+        {
+            out.writeObject("LeinwandData");
+            out.writeObject(data);
+        }
+        catch (IOException ex)
+        {
+            ex.printStackTrace();
+        }
     }
     //Singleton ist das erste Objekt der Klasse Leinwand
     //Hier können andere Objekte eine Instanz von Leinwand abrufen
     //und bekommen ein Handle
     public static Leinwand leinwandSingleton;
+    Socket LeinwandServer;
+    ObjectOutputStream out;
+    ObjectInputStream in;
 
     private Leinwand()
     {
-        data = new LeinwandData();
+        try
+        {
+            LeinwandServer = new Socket("localhost", 3333);
+            out = new ObjectOutputStream(LeinwandServer.getOutputStream());
+            in = new ObjectInputStream(LeinwandServer.getInputStream());
+        }
+        catch (UnknownHostException e)
+        {
+            e.printStackTrace();
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+        setLeinwandData(new LeinwandData());
         create();
     }
 
@@ -93,7 +111,21 @@ public class Leinwand
      */
     public int getbreite()
     {
-        return this.data.width;
+        try
+        {
+            out.writeObject("getbreite");
+            out.writeObject(0);
+            return (int)in.readObject();
+        }
+        catch (IOException ex)
+        {
+            ex.printStackTrace();
+        }
+        catch (ClassNotFoundException ex)
+        {
+            ex.printStackTrace();
+        }
+        return 0;
     }
 
     /**
@@ -103,13 +135,34 @@ public class Leinwand
      */
     public int gethoehe()
     {
-        return this.data.height;
+        try
+        {
+            out.writeObject("gethoehe");
+            out.writeObject(0);
+            return (int)in.readObject();
+        }
+        catch (IOException ex)
+        {
+            ex.printStackTrace();
+        }
+        catch (ClassNotFoundException ex)
+        {
+            ex.printStackTrace();
+        }
+        return 0;
     }
 
     public void reopen()
     {
-        Display.destroy();
-        createDisplay();
+        setLeinwandData(data);
+        try
+        {
+            out.writeObject("reopen");
+        }
+        catch (IOException ex)
+        {
+            ex.printStackTrace();
+        }
     }
 
     private void create()
@@ -117,56 +170,6 @@ public class Leinwand
         this.data.objects = new ArrayList<OBJECT_2D>();
         this.data.background_objects = new ArrayList<OBJECT_2D>();
         this.data.textList = new ArrayList<OBJECT_2D>();
-        createDisplay();
-    }
-    
-    private void createDisplay()
-    {
-        try
-        {
-            AL.create();
-            // Setze die Höhe udn Breite des Displays, den Titel und erstellt es
-            if (this.data.fullscreen)
-            {
-                Display.setFullscreen(true);
-            }
-            else
-            {
-                Display.setFullscreen(false);
-                Display.setDisplayMode(new DisplayMode(this.data.width, this.data.height));
-            }
-            Display.setVSyncEnabled(true);
-            Display.setTitle(data.title);
-            Display.create();
-            this.data.height = Display.getHeight();
-            this.data.width = Display.getWidth();
-        }
-        catch (LWJGLException e)
-        {
-            e.printStackTrace();
-            Display.destroy();
-            System.exit(1);
-        }
-        glMatrixMode(GL_PROJECTION);
-        glOrtho(0, this.data.width, this.data.height, 0, 1, -1);
-        glMatrixMode(GL_MODELVIEW);
-        glClearColor(1f, 1f, 1f, 1f);
-
-        glEnable(GL_POINT_SMOOTH);	// Antialiasing f�r Punkte einschalten
-        glEnable(GL_LINE_SMOOTH);	// Antialiasing f�r Linien einschalten
-
-        //Alpha enable
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    }
-
-    private void applyOrtho()
-    {
-        glLoadIdentity();
-        glPushAttrib(GL_TRANSFORM_BIT);
-        glMatrixMode(GL_MODELVIEW);
-        glTranslatef(this.data.transformx, this.data.transformy, 0);
-        glPopAttrib();
     }
 
     /**
@@ -175,10 +178,15 @@ public class Leinwand
     public void close()
     {
         //Delete all textures
-        this.data.textureList.destroy();
-        //Destroy the Display
-        Display.destroy();
-        AL.destroy();
+        //this.data.textureList.destroy();
+        try
+        {
+            out.writeObject("close");
+        }
+        catch (IOException ex)
+        {
+            ex.printStackTrace();
+        }
     }
 
     /**
@@ -186,23 +194,23 @@ public class Leinwand
      *
      * @param add zeigt das Element an.
      */
+    private long uniqueid = 1;
     public void addObject(OBJECT_2D add)
     {
-        if (add.isBackground())
+        if(add.uniqueid == 0)
         {
-            //Das Objekt ist für den Hintergrund e.g. für die Landschaft bestimmt
-            this.data.background_objects.remove(add);
-            this.data.background_objects.add(add);
+            add.uniqueid = uniqueid++;
         }
-        if (add.isText())
+        
+        try
         {
-            this.data.textList.remove(add);    //entferne die Figur, falls vorhanden
-            this.data.textList.add(add);       //neu anfügen
+            out.reset();
+            out.writeObject("OBJECT_2D");
+            out.writeObject(add);
         }
-        if (!add.isBackground() && !add.isText())
+        catch (IOException ex)
         {
-            this.data.objects.remove(add);
-            this.data.objects.add(add);
+            ex.printStackTrace();
         }
     }
 
@@ -213,9 +221,15 @@ public class Leinwand
      */
     public void removeObject(OBJECT_2D add)
     {
-        this.data.objects.remove(add);
-        this.data.background_objects.remove(add);
-        this.data.textList.remove(add);
+        try
+        {
+            out.writeObject("removeOBJECT_2D");
+            out.writeObject(add);
+        }
+        catch (IOException ex)
+        {
+            ex.printStackTrace();
+        }
     }
 
     /**
@@ -223,49 +237,14 @@ public class Leinwand
      */
     public void redraw()
     {
-        if (this.isKeyDown(this.KEY_LCONTROL) && this.isKeyDown(this.KEY_S))
+        try
         {
-            this.data.screenshotcounter++;
-            this.takeScreenshot("screenshot" + this.data.screenshotcounter + ".jpg");
+            out.writeObject("redraw");
         }
-        if (Display.isCloseRequested())
+        catch (IOException ex)
         {
-            this.data.iscloserequested = true;
-            System.out.println("Display Close Requested");
+            ex.printStackTrace();
         }
-        else
-        {
-            glClear(GL_COLOR_BUFFER_BIT);
-            applyOrtho();
-
-            //Erst den Hintergrund zeichnen
-            for (OBJECT_2D obj : this.data.background_objects)
-            {
-                obj.zeichnen(this.data.factor);
-            }
-            //Dann den Rest
-            for (OBJECT_2D obj : this.data.objects)
-            {
-                obj.zeichnen(this.data.factor);
-            }
-            //Und dann noch den Text
-            for (OBJECT_2D text : this.data.textList)
-            {
-                text.zeichnen(this.data.factor);
-            }
-            glEnable(GL_TEXTURE_2D);
-            glDisable(GL_TEXTURE_2D);
-            Display.update();
-            if (this.data.fpslimiter)
-            {
-                Display.sync(this.data.fpslimit);
-            }
-        }
-        
-        //FPS berechnen
-        this.data.elapsed = System.nanoTime() - this.data.lastNanoTime;
-        this.data.fps = 1000000000 / this.data.elapsed;
-        this.data.lastNanoTime = System.nanoTime();
     }
 
     /**
@@ -275,7 +254,15 @@ public class Leinwand
      */
     public void useFPSLimiter(boolean use)
     {
-        this.data.fpslimiter = use;
+        try
+        {
+            out.writeObject("FPSLimiter");
+            out.writeObject(use);
+        }
+        catch (IOException ex)
+        {
+            ex.printStackTrace();
+        }
     }
 
     /**
@@ -285,11 +272,21 @@ public class Leinwand
      */
     public int getFPSLimit()
     {
-        if (this.data.fpslimiter == false)
+        try
         {
-            return 0;
+            out.writeObject("getFPSLimit");
+            out.writeObject(0);
+            return (int)in.readObject();
         }
-        return this.data.fpslimit;
+        catch (IOException ex)
+        {
+            ex.printStackTrace();
+        }
+        catch (ClassNotFoundException ex)
+        {
+            ex.printStackTrace();
+        }
+        return 0;
     }
 
     /**
@@ -299,8 +296,15 @@ public class Leinwand
      */
     public void limitFPS(int fps)
     {
-        this.data.fpslimiter = true;
-        this.data.fpslimit = fps;
+        try
+        {
+            out.writeObject("limitFPS");
+            out.writeObject(fps);
+        }
+        catch (IOException ex)
+        {
+            ex.printStackTrace();
+        }
     }
 
     /**
@@ -310,8 +314,21 @@ public class Leinwand
      */
     public long getdelta()
     {
-        return this.data.elapsed;
-
+        try
+        {
+            out.writeObject("getdelta");
+            out.writeObject(0);
+            return (int)in.readObject();
+        }
+        catch (IOException ex)
+        {
+            ex.printStackTrace();
+        }
+        catch (ClassNotFoundException ex)
+        {
+            ex.printStackTrace();
+        }
+        return 0;
     }
 
     /**
@@ -322,7 +339,21 @@ public class Leinwand
      */
     public double getfps()
     {
-        return this.data.fps;
+        try
+        {
+            out.writeObject("getfps");
+            out.writeObject(0);
+            return (int)in.readObject();
+        }
+        catch (IOException ex)
+        {
+            ex.printStackTrace();
+        }
+        catch (ClassNotFoundException ex)
+        {
+            ex.printStackTrace();
+        }
+        return 0;
     }
 
     /**
@@ -332,7 +363,21 @@ public class Leinwand
      */
     public boolean checkCloseRequest()
     {
-        return this.data.iscloserequested;
+        try
+        {
+            out.writeObject("checkCloseRequest");
+            out.writeObject(0);
+            return (boolean)in.readObject();
+        }
+        catch (IOException ex)
+        {
+            ex.printStackTrace();
+        }
+        catch (ClassNotFoundException ex)
+        {
+            ex.printStackTrace();
+        }
+        return true;
     }
 
     /**
@@ -343,8 +388,18 @@ public class Leinwand
      */
     public void changePosition(int x, int y)
     {
-        this.data.transformx = x;
-        this.data.transformy = y;
+        xy var = new xy();
+        var.x = x;
+        var.y = y;
+        try
+        {
+            out.writeObject("changePosition");
+            out.writeObject(var);
+        }
+        catch (IOException ex)
+        {
+            ex.printStackTrace();
+        }
     }
 
     /**
@@ -355,8 +410,18 @@ public class Leinwand
      */
     public void relbewegen(int dx, int dy)
     {
-        this.data.transformx += dx;
-        this.data.transformy += dy;
+        xy var = new xy();
+        var.x = dx;
+        var.y = dy;
+        try
+        {
+            out.writeObject("relbewegen");
+            out.writeObject(var);
+        }
+        catch (IOException ex)
+        {
+            ex.printStackTrace();
+        }
     }
 
     /**
@@ -366,7 +431,15 @@ public class Leinwand
      */
     public void setZoom(double zoom)
     {
-        this.data.factor = zoom;
+        try
+        {
+            out.writeObject("setZoom");
+            out.writeObject(zoom);
+        }
+        catch (IOException ex)
+        {
+            ex.printStackTrace();
+        };
     }
 
     /**
@@ -375,10 +448,10 @@ public class Leinwand
      * @param texture String mit Pfad zur Textur.
      * @return Eine geladene Textur.
      */
-    public Texture loadTexture(String texture)
+    /*public Texture loadTexture(String texture)
     {
         return this.data.textureList.loadTexture(texture);
-    }
+    }*/
 
     /**
      * Verschiebt das Bild anhand der Eingaben der Pfeiltasten. Nützlich für
@@ -410,6 +483,15 @@ public class Leinwand
             yg = yg / gethoehe();
             System.out.println("X  " + xg + "  Y  " + yg);
         }
+        try
+        {
+            out.writeObject("LeinwandData");
+            out.writeObject(data);
+        }
+        catch (IOException ex)
+        {
+            ex.printStackTrace();
+        }
     }
 
     /**
@@ -420,7 +502,21 @@ public class Leinwand
      */
     public boolean isKeyDown(int key)
     {
-        return Keyboard.isKeyDown(key);
+        try
+        {
+            out.writeObject("isKeyDown");
+            out.writeObject(key);
+            return (boolean)in.readObject();
+        }
+        catch (IOException ex)
+        {
+            ex.printStackTrace();
+        }
+        catch (ClassNotFoundException ex)
+        {
+            ex.printStackTrace();
+        }
+        return true;
     }
 
     /**
@@ -428,7 +524,21 @@ public class Leinwand
      */
     public int getMouseX()
     {
-        return Mouse.getX();
+        try
+        {
+            out.writeObject("getMouseX");
+            out.writeObject(0);
+            return (int)in.readObject();
+        }
+        catch (IOException ex)
+        {
+            ex.printStackTrace();
+        }
+        catch (ClassNotFoundException ex)
+        {
+            ex.printStackTrace();
+        }
+        return 0;
     }
 
     /**
@@ -436,7 +546,21 @@ public class Leinwand
      */
     public int getMouseY()
     {
-        return this.data.height - Mouse.getY();
+        try
+        {
+            out.writeObject("getMouseY");
+            out.writeObject(0);
+            return (int)in.readObject();
+        }
+        catch (IOException ex)
+        {
+            ex.printStackTrace();
+        }
+        catch (ClassNotFoundException ex)
+        {
+            ex.printStackTrace();
+        }
+        return 0;
     }
 
     /**
@@ -446,7 +570,21 @@ public class Leinwand
      */
     public int getMouseDX()
     {
-        return Mouse.getDX();
+        try
+        {
+            out.writeObject("getMouseDX");
+            out.writeObject(0);
+            return (int)in.readObject();
+        }
+        catch (IOException ex)
+        {
+            ex.printStackTrace();
+        }
+        catch (ClassNotFoundException ex)
+        {
+            ex.printStackTrace();
+        }
+        return 0;
     }
 
     /**
@@ -456,7 +594,21 @@ public class Leinwand
      */
     public int getMouseDY()
     {
-        return Mouse.getDY();
+        try
+        {
+            out.writeObject("getMouseDY");
+            out.writeObject(0);
+            return (int)in.readObject();
+        }
+        catch (IOException ex)
+        {
+            ex.printStackTrace();
+        }
+        catch (ClassNotFoundException ex)
+        {
+            ex.printStackTrace();
+        }
+        return 0;
     }
 
     /**
@@ -466,7 +618,21 @@ public class Leinwand
      */
     public int getDMouseWheel()
     {
-        return Mouse.getDWheel();
+        try
+        {
+            out.writeObject("getDMouseWheel");
+            out.writeObject(0);
+            return (int)in.readObject();
+        }
+        catch (IOException ex)
+        {
+            ex.printStackTrace();
+        }
+        catch (ClassNotFoundException ex)
+        {
+            ex.printStackTrace();
+        }
+        return 0;
     }
 
     /**
@@ -497,7 +663,7 @@ public class Leinwand
      */
     public boolean isMouseKeyDown(int index)
     {
-        return Mouse.isButtonDown(index);
+        return org.lwjgl.input.Mouse.isButtonDown(index);
     }
 
     /**
@@ -505,9 +671,9 @@ public class Leinwand
      */
     public void printAvailableMouseKeys()
     {
-        for (int i = Mouse.getButtonCount(); i > 0; i--)
+        for (int i = org.lwjgl.input.Mouse.getButtonCount(); i > 0; i--)
         {
-            System.out.println("Key: Name: " + Mouse.getButtonName(i) + " index: " + i);
+            System.out.println("Key: Name: " + org.lwjgl.input.Mouse.getButtonName(i) + " index: " + i);
         }
     }
 
@@ -518,9 +684,9 @@ public class Leinwand
      */
     public void makeMouseVisible(boolean visible)
     {
-        Mouse.setGrabbed(visible);
+        org.lwjgl.input.Mouse.setGrabbed(visible);
     }
-    private saveScreenshot savescreen;
+    //private org.Leinwand.Leinwand.saveScreenshot savescreen;
     private long lastscreenshot = System.currentTimeMillis();
 
     public void takeScreenshot(String file)
@@ -530,19 +696,7 @@ public class Leinwand
             return;
         }
         lastscreenshot = System.currentTimeMillis();
-        GL11.glReadBuffer(GL11.GL_FRONT);
-        int width = Display.getDisplayMode().getWidth();
-        int height = Display.getDisplayMode().getHeight();
-        int bpp = 4; // Assuming a 32-bit display with a byte each for red, green, blue, and alpha.
-        ByteBuffer buffer = BufferUtils.createByteBuffer(width * height * bpp);
-        GL11.glReadPixels(0, 0, width, height, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, buffer);
-
-        savescreen = new saveScreenshot(file, buffer, height, width);
-        Runnable rs = (Runnable) savescreen;
-        Thread s = new Thread(rs, "saving Screenshot");
-        s.start();
     }
-    
     //Key Definitions
     public static final int EVENT_SIZE = 18;
     public static final int CHAR_NONE = 0;
@@ -681,48 +835,4 @@ public class Leinwand
     public static final int KEY_SLEEP = 223;
     public static final int MOUSE_KEY_LEFT = 0;
     public static final int MOUSE_KEY_RIGHT = 1;
-
-    private class saveScreenshot implements Runnable
-    {
-
-        private ByteBuffer buffer;
-        private String path;
-        private int height, width;
-
-        public saveScreenshot(String path, ByteBuffer buffer, int height, int width)
-        {
-            this.buffer = buffer;
-            this.path = path;
-            this.height = height;
-            this.width = width;
-        }
-
-        public void run()
-        {
-            File screenshot = new File(path); // The file to save to.
-            String format = "JPG"; // Example: "PNG" or "JPG"
-            BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-            int bpp = 4;
-            for (int x = 0; x < width; x++)
-            {
-                for (int y = 0; y < height; y++)
-                {
-                    int i = (x + (width * y)) * bpp;
-                    int r = buffer.get(i) & 0xFF;
-                    int g = buffer.get(i + 1) & 0xFF;
-                    int b = buffer.get(i + 2) & 0xFF;
-                    image.setRGB(x, height - (y + 1), (0xFF << 24) | (r << 16) | (g << 8) | b);
-                }
-            }
-
-            try
-            {
-                ImageIO.write(image, format, screenshot);
-            }
-            catch (IOException e)
-            {
-                e.printStackTrace();
-            }
-        }
-    }
 }

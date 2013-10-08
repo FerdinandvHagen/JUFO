@@ -2,8 +2,9 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.TextureList;
+package org.TextureListServer;
 
+import org.TextureList.*;
 import java.io.Serializable;
 import org.newdawn.slick.opengl.Texture;
 
