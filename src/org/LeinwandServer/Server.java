@@ -20,18 +20,13 @@ public class Server
         LeinwandServer leinwand = LeinwandServer.gibLeinwand();
         while (true)
         {
-            while (!thread.newData)
+            boolean sync = false;
+            while (!sync)
             {
-                leinwand.redraw();
-                //Wait for a client to connect
-                /*try
+                synchronized ((Object) thread.newData)
                 {
-                    Thread.sleep(1);
+                    sync = thread.newData;
                 }
-                catch (InterruptedException ex)
-                {
-                    ex.printStackTrace();
-                }*/
             }
 
             //Process new Data
@@ -39,14 +34,17 @@ public class Server
             {
                 leinwand.close();
                 leinwand = null;
-                thread.newData = false;
+                synchronized ((Object) thread.newData)
+                {
+                    thread.newData = false;
+                }
                 return;
             }
             //Determine, what will be next send
             if (thread.id.equals("OBJECT_2D"))
             {
                 //new Object will be send; Register at the Leinwand.
-                leinwand.addObject((Rechteck) thread.object);
+                leinwand.addObject((OBJECT_2D) thread.object);
             }
             else if (thread.id.equals("LeinwandData"))
             {
@@ -89,69 +87,60 @@ public class Server
             else if (thread.id.equals("getbreite"))
             {
                 thread.object = leinwand.getbreite();
-                thread.newData = false;
             }
             else if (thread.id.equals("getbreite"))
             {
                 thread.object = leinwand.gethoehe();
-                thread.newData = false;
             }
             else if (thread.id.equals("getFPSLimit"))
             {
                 thread.object = leinwand.getFPSLimit();
-                thread.newData = false;
             }
             else if (thread.id.equals("getdelta"))
             {
                 thread.object = leinwand.getdelta();
-                thread.newData = false;
             }
             else if (thread.id.equals("getfps"))
             {
                 thread.object = leinwand.getfps();
-                thread.newData = false;
             }
             else if (thread.id.equals("checkCloseRequest"))
             {
                 thread.object = leinwand.checkCloseRequest();
-                thread.newData = false;
             }
             else if (thread.id.equals("isKeyDown"))
             {
                 thread.object = leinwand.isKeyDown((int) thread.object);
-                thread.newData = false;
             }
             else if (thread.id.equals("getMouseX"))
             {
                 thread.object = leinwand.getMouseX();
-                thread.newData = false;
             }
             else if (thread.id.equals("getMouseY"))
             {
                 thread.object = leinwand.getMouseY();
-                thread.newData = false;
             }
             else if (thread.id.equals("getMouseDX"))
             {
                 thread.object = leinwand.getMouseDX();
-                thread.newData = false;
             }
             else if (thread.id.equals("getMouseDY"))
             {
                 thread.object = leinwand.getMouseDY();
-                thread.newData = false;
             }
             else if (thread.id.equals("getDMouseWheel"))
             {
                 thread.object = leinwand.getDMouseWheel();
-                thread.newData = false;
             }
             else
             {
                 System.out.println("Not found: " + thread.id);
             }
 
-            thread.newData = false;
+            synchronized ((Object) thread.newData)
+            {
+                thread.newData = false;
+            }
             //and repeat everything
         }
     }
@@ -276,17 +265,14 @@ public class Server
 
             while (true)
             {
-                while (this.newData)
+                boolean sync = true;
+                while (sync)
                 {
+                    synchronized ((Object) newData)
+                    {
+                        sync = newData;
+                    }
                     //Wait for the data to be processed
-                    try
-                    {
-                        Thread.sleep(1);
-                    }
-                    catch (InterruptedException ex)
-                    {
-                        ex.printStackTrace();
-                    }
                 }
 
                 //Read the next Object
@@ -307,7 +293,10 @@ public class Server
                 }
                 else if (id.equals("close"))
                 {
-                    this.newData = true;
+                    synchronized ((Object) newData)
+                    {
+                        this.newData = true;
+                    }
                     System.out.println("Connection closed");
                     return;
                 }
@@ -327,18 +316,17 @@ public class Server
                 {
                     this.object = in.readObject();
                     //Set the index to new Data
-                    this.newData = true;
-                    while (this.newData)
+                    synchronized ((Object) newData)
                     {
-                        //Wait for the data to be processed
-                        /*try
+                        this.newData = true;
+                    }
+                    sync = true;
+                    while (sync)
+                    {
+                        synchronized ((Object) newData)
                         {
-                            Thread.sleep(1);
+                            sync = newData;
                         }
-                        catch (InterruptedException ex)
-                        {
-                            ex.printStackTrace();
-                        }*/
                     }
 
                     //and respond to the request
@@ -346,7 +334,10 @@ public class Server
                 }
                 else
                 {
-                    this.newData = true;
+                    synchronized ((Object) newData)
+                    {
+                        this.newData = true;
+                    }
                 }
 
                 //System.out.println("Client requested: " + id);
