@@ -13,13 +13,13 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import javax.imageio.ImageIO;
+import org.TextureList.TextureList;
 
 import static org.lwjgl.opengl.GL11.*;
-import org.newdawn.slick.opengl.Texture;
 
 import org.lwjgl.BufferUtils;
-import org.lwjgl.openal.AL;
 import org.lwjgl.opengl.GL11;
+import org.newdawn.slick.opengl.Texture;
 
 /**
  * Adaption der bekannten Java-Leinwand-Implementationen auf openGL. Sie
@@ -33,7 +33,8 @@ public class LeinwandServer
 {
 
     LeinwandData data;
-
+    TextureList textureList;
+    
     public void setLeinwandData(LeinwandData data)
     {
         //this.data = data;
@@ -46,6 +47,7 @@ public class LeinwandServer
     private LeinwandServer()
     {
         data = new LeinwandData();
+        textureList = new TextureList();
         create();
     }
 
@@ -396,10 +398,11 @@ public class LeinwandServer
      * @param texture String mit Pfad zur Textur.
      * @return Eine geladene Textur.
      */
-    /*public Texture loadTexture(String texture)
-     {
-     return this.data.textureList.loadTexture(texture);
-     }*/
+    public Texture loadTexture(String texture)
+    {
+        return this.textureList.loadTexture(texture);
+    }
+
     /**
      * Verschiebt das Bild anhand der Eingaben der Pfeiltasten. Nützlich für
      * Übungen, Test, ...

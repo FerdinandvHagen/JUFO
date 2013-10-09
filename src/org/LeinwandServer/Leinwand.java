@@ -25,6 +25,7 @@ public class Leinwand
 {
 
     LeinwandData data;
+
     public void setLeinwandData(LeinwandData data)
     {
         this.data = data;
@@ -115,7 +116,7 @@ public class Leinwand
         {
             out.writeObject("getbreite");
             out.writeObject(0);
-            return (int)in.readObject();
+            return (int) in.readObject();
         }
         catch (IOException ex)
         {
@@ -139,7 +140,7 @@ public class Leinwand
         {
             out.writeObject("gethoehe");
             out.writeObject(0);
-            return (int)in.readObject();
+            return (int) in.readObject();
         }
         catch (IOException ex)
         {
@@ -188,20 +189,20 @@ public class Leinwand
             ex.printStackTrace();
         }
     }
-
     /**
      * Fügt der Leinwand ein OBJECT_2D hinzu.
      *
      * @param add zeigt das Element an.
      */
     private long uniqueid = 1;
+
     public void addObject(OBJECT_2D add)
     {
-        if(add.uniqueid == 0)
+        if (add.uniqueid == 0)
         {
             add.uniqueid = uniqueid++;
         }
-        
+
         try
         {
             out.reset();
@@ -276,7 +277,7 @@ public class Leinwand
         {
             out.writeObject("getFPSLimit");
             out.writeObject(0);
-            return (int)in.readObject();
+            return (int) in.readObject();
         }
         catch (IOException ex)
         {
@@ -318,7 +319,7 @@ public class Leinwand
         {
             out.writeObject("getdelta");
             out.writeObject(0);
-            return (int)in.readObject();
+            return (int) in.readObject();
         }
         catch (IOException ex)
         {
@@ -343,7 +344,7 @@ public class Leinwand
         {
             out.writeObject("getfps");
             out.writeObject(0);
-            return (int)in.readObject();
+            return (double) in.readObject();
         }
         catch (IOException ex)
         {
@@ -367,7 +368,7 @@ public class Leinwand
         {
             out.writeObject("checkCloseRequest");
             out.writeObject(0);
-            return (boolean)in.readObject();
+            return (boolean) in.readObject();
         }
         catch (IOException ex)
         {
@@ -439,19 +440,8 @@ public class Leinwand
         catch (IOException ex)
         {
             ex.printStackTrace();
-        };
+        }
     }
-
-    /**
-     * Lädt eine neue Textur.
-     *
-     * @param texture String mit Pfad zur Textur.
-     * @return Eine geladene Textur.
-     */
-    /*public Texture loadTexture(String texture)
-    {
-        return this.data.textureList.loadTexture(texture);
-    }*/
 
     /**
      * Verschiebt das Bild anhand der Eingaben der Pfeiltasten. Nützlich für
@@ -506,7 +496,7 @@ public class Leinwand
         {
             out.writeObject("isKeyDown");
             out.writeObject(key);
-            return (boolean)in.readObject();
+            return (boolean) in.readObject();
         }
         catch (IOException ex)
         {
@@ -528,7 +518,7 @@ public class Leinwand
         {
             out.writeObject("getMouseX");
             out.writeObject(0);
-            return (int)in.readObject();
+            return (int) in.readObject();
         }
         catch (IOException ex)
         {
@@ -550,7 +540,7 @@ public class Leinwand
         {
             out.writeObject("getMouseY");
             out.writeObject(0);
-            return (int)in.readObject();
+            return (int) in.readObject();
         }
         catch (IOException ex)
         {
@@ -574,7 +564,7 @@ public class Leinwand
         {
             out.writeObject("getMouseDX");
             out.writeObject(0);
-            return (int)in.readObject();
+            return (int) in.readObject();
         }
         catch (IOException ex)
         {
@@ -598,7 +588,7 @@ public class Leinwand
         {
             out.writeObject("getMouseDY");
             out.writeObject(0);
-            return (int)in.readObject();
+            return (int) in.readObject();
         }
         catch (IOException ex)
         {
@@ -622,7 +612,7 @@ public class Leinwand
         {
             out.writeObject("getDMouseWheel");
             out.writeObject(0);
-            return (int)in.readObject();
+            return (int) in.readObject();
         }
         catch (IOException ex)
         {

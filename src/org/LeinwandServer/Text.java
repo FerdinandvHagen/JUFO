@@ -4,7 +4,6 @@
  */
 package org.LeinwandServer;
 
-import org.Leinwand.*;
 import static org.lwjgl.opengl.GL11.*;
 
 import org.newdawn.slick.SlickException;
@@ -25,6 +24,7 @@ public class Text extends OBJECT_2D
     private String fontart;
     private int size;
     private Color color;
+    private boolean fontsSetUp;
 
     public Text(int x, int y, String text)
     {
@@ -36,9 +36,9 @@ public class Text extends OBJECT_2D
         this.fontart = "Arial";
         this.size = 18;
         this.color = Color.BLACK;
-        this.setUpFonts();
+        this.fontsSetUp = false;
     }
-    
+
     public Text(double x, double y, String text)
     {
         this.typetext = true;
@@ -49,27 +49,27 @@ public class Text extends OBJECT_2D
         this.fontart = "Arial";
         this.size = 18;
         this.color = Color.BLACK;
-        this.setUpFonts();
+        this.fontsSetUp = false;
     }
 
     public void setFontColor(Color color)
     {
         this.color = color;
-        this.setUpFonts();
+        this.fontsSetUp = false;
         update();
     }
 
     public void setFontArt(String fontart)
     {
         this.fontart = fontart;
-        this.setUpFonts();
+        this.fontsSetUp = false;
         update();
     }
 
     public void setSize(int pixel)
     {
         this.size = pixel;
-        this.setUpFonts();
+        this.fontsSetUp = false;
         update();
     }
 
@@ -94,6 +94,10 @@ public class Text extends OBJECT_2D
 
     public void zeichnen(double factor)
     {
+        if(!this.fontsSetUp)
+        {
+            this.setUpFonts();
+        }
         if (hooked)
         {
             glMatrixMode(GL_MODELVIEW);
@@ -124,25 +128,25 @@ public class Text extends OBJECT_2D
             e.printStackTrace();
         }
     }
-    
+
     public double getXd()
     {
         return this.x;
     }
-    
+
     public int getX()
     {
-        return (int)this.x;
+        return (int) this.x;
     }
-    
+
     public double getYd()
     {
         return this.y;
     }
-    
+
     public int getY()
     {
-        return (int)this.y;
+        return (int) this.y;
     }
 
     @Override
@@ -150,7 +154,9 @@ public class Text extends OBJECT_2D
     {
         return false;
     }
-    public String getText(){
-        return text;   
+
+    public String getText()
+    {
+        return text;
     }
 }

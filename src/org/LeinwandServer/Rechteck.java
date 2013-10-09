@@ -6,6 +6,7 @@ package org.LeinwandServer;
 
 //import org.TextureListServer.Texture;
 import static org.lwjgl.opengl.GL11.*;
+import org.newdawn.slick.opengl.Texture;
 
 /**
  *
@@ -15,12 +16,15 @@ public class Rechteck extends OBJECT_2D
 {
 
     private double w, h;
-    //private Texture textur;
+    private Texture texture;
+    private String texturePath;
     private int scalex, scaley;
 
     public Rechteck(int x, int y, int w, int h)
     {
         super();
+        this.texturePath = null;
+        this.texture = null;
         this.x = x;
         this.y = y;
         this.w = w;
@@ -33,6 +37,8 @@ public class Rechteck extends OBJECT_2D
     public Rechteck(double x, double y, double w, double h)
     {
         super();
+        this.texturePath = null;
+        this.texture = null;
         this.x = x;
         this.y = y;
         this.w = w;
@@ -68,7 +74,7 @@ public class Rechteck extends OBJECT_2D
         }
 
         //Hier wird das Objekt gezeichnet
-        //if (textur == null)
+        if (texturePath == null)
         {
             glColor4d(colorrd, colorgr, colorbl, alpha);
             glBegin(GL_QUADS);
@@ -78,12 +84,17 @@ public class Rechteck extends OBJECT_2D
             glVertex2d(pointx, pointy + h);
             glEnd();
         }
-        /*else
+        else
         {
             glColor4d(1f, 1f, 1f, 1f);
             glDisable(GL_TEXTURE_2D);
             glEnable(GL_TEXTURE_2D);
-            //textur.bind();
+            if (texture == null)
+            {
+                texture = LeinwandServer.gibLeinwand().loadTexture(texturePath);
+            }
+            texture.bind();
+            
             glBegin(GL_TRIANGLES);
 
             double scw = this.w / this.scalex;
@@ -111,7 +122,7 @@ public class Rechteck extends OBJECT_2D
             }
             glEnd();
             glDisable(GL_TEXTURE_2D);
-        }*/
+        }
         if (rotation != 0)
         {
             processTranslationsTwo();
@@ -127,7 +138,7 @@ public class Rechteck extends OBJECT_2D
 
     public void ladeTextur(String textur)
     {
-        //this.textur = Leinwand.gibLeinwand().loadTexture(textur);
+        this.texturePath = textur;
         update();
     }
 
@@ -182,15 +193,17 @@ public class Rechteck extends OBJECT_2D
         return (int) this.w;
     }
 
-    public void setzeW(double w){
-        this.w=w;
+    public void setzeW(double w)
+    {
+        this.w = w;
         update();
     }
-    public void setzeH(double h){
-        this.h=h;
+
+    public void setzeH(double h)
+    {
+        this.h = h;
         update();
     }
-    
 
     public boolean schneidet(OBJECT_2D obj)
     {
