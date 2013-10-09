@@ -10,6 +10,7 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.List;
 import org.lwjgl.input.Keyboard;
 //import org.newdawn.slick.opengl.Texture;
 
@@ -26,6 +27,7 @@ public class Leinwand
 
     LeinwandData data;
     KeyboardWrapper keyboardBurst;
+    private List<OBJECT_2D> waitList;
 
     public void setLeinwandData(LeinwandData data)
     {
@@ -65,6 +67,7 @@ public class Leinwand
         }
         setLeinwandData(new LeinwandData());
         keyboardBurst = new KeyboardWrapper();
+        waitList = new ArrayList<OBJECT_2D>();
         create();
     }
 
@@ -202,15 +205,8 @@ public class Leinwand
             add.uniqueid = uniqueid++;
         }
 
-        try
-        {
-            out.reset();
-            out.writeObject(new Paket("OBJECT_2D", add));
-        }
-        catch (IOException ex)
-        {
-            ex.printStackTrace();
-        }
+        waitList.remove(add);
+        waitList.add(add);
     }
 
     /**
@@ -235,6 +231,21 @@ public class Leinwand
      */
     public void redraw()
     {
+        try
+        {
+            out.reset();
+            for (OBJECT_2D add : waitList)
+            {
+                out.writeObject(new Paket("OBJECT_2D", add));
+            }
+        }
+        catch (IOException ex)
+        {
+            ex.printStackTrace();
+        }
+
+        waitList.clear();
+        
         try
         {
             out.writeObject(new Paket("redraw"));

@@ -326,6 +326,7 @@ public class Server
                 }
                 else
                 {
+                    out.reset();
                     synchronized ((Object) newData)
                     {
                         this.newData = true;
