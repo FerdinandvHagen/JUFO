@@ -34,7 +34,8 @@ public class LeinwandServer
 
     LeinwandData data;
     TextureList textureList;
-    
+    KeyboardWrapper KeyboardBurst;
+
     public void setLeinwandData(LeinwandData data)
     {
         //this.data = data;
@@ -48,6 +49,7 @@ public class LeinwandServer
     {
         data = new LeinwandData();
         textureList = new TextureList();
+        KeyboardBurst = new KeyboardWrapper();
         create();
     }
 
@@ -246,11 +248,16 @@ public class LeinwandServer
      */
     public void redraw()
     {
-        /**
-         * if (this.isKeyDown(this.KEY_LCONTROL) && this.isKeyDown(this.KEY_S))
-         * { this.data.screenshotcounter++; this.takeScreenshot("screenshot" +
-         * this.data.screenshotcounter + ".jpg"); }
-         */
+
+        if (this.isKeyDown(this.KEY_LCONTROL) && this.isKeyDown(this.KEY_S))
+        {
+            this.data.screenshotcounter++;
+            this.takeScreenshot("screenshot" + this.data.screenshotcounter + ".jpg");
+        }
+        
+        //Clear our Keyboardburst
+        KeyboardBurst.readKeyStates();
+
         if (Display.isCloseRequested())
         {
             this.data.iscloserequested = true;
@@ -441,6 +448,10 @@ public class LeinwandServer
      * @param key zu testende Taste
      * @return true, wenn Taste gedrückt
      */
+    public KeyboardWrapper isKeyDown()
+    {     
+        return KeyboardBurst;
+    }
     public boolean isKeyDown(int key)
     {
         return Keyboard.isKeyDown(key);

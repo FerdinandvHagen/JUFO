@@ -25,14 +25,14 @@ public class Leinwand
 {
 
     LeinwandData data;
+    KeyboardWrapper keyboardBurst;
 
     public void setLeinwandData(LeinwandData data)
     {
         this.data = data;
         try
         {
-            out.writeObject("LeinwandData");
-            out.writeObject(data);
+            out.writeObject(new Paket("LeinwandData", data));
         }
         catch (IOException ex)
         {
@@ -64,6 +64,7 @@ public class Leinwand
             e.printStackTrace();
         }
         setLeinwandData(new LeinwandData());
+        keyboardBurst = new KeyboardWrapper();
         create();
     }
 
@@ -114,8 +115,7 @@ public class Leinwand
     {
         try
         {
-            out.writeObject("getbreite");
-            out.writeObject(0);
+            out.writeObject(new Paket("getbreite"));
             return (int) in.readObject();
         }
         catch (IOException ex)
@@ -138,8 +138,7 @@ public class Leinwand
     {
         try
         {
-            out.writeObject("gethoehe");
-            out.writeObject(0);
+            out.writeObject(new Paket("gethoehe"));
             return (int) in.readObject();
         }
         catch (IOException ex)
@@ -158,7 +157,7 @@ public class Leinwand
         setLeinwandData(data);
         try
         {
-            out.writeObject("reopen");
+            out.writeObject(new Paket("reopen"));
         }
         catch (IOException ex)
         {
@@ -182,7 +181,7 @@ public class Leinwand
         //this.data.textureList.destroy();
         try
         {
-            out.writeObject("close");
+            out.writeObject(new Paket("close"));
         }
         catch (IOException ex)
         {
@@ -206,8 +205,7 @@ public class Leinwand
         try
         {
             out.reset();
-            out.writeObject("OBJECT_2D");
-            out.writeObject(add);
+            out.writeObject(new Paket("OBJECT_2D", add));
         }
         catch (IOException ex)
         {
@@ -224,8 +222,7 @@ public class Leinwand
     {
         try
         {
-            out.writeObject("removeOBJECT_2D");
-            out.writeObject(add);
+            out.writeObject(new Paket("removeOBJECT_2D", add));
         }
         catch (IOException ex)
         {
@@ -240,9 +237,15 @@ public class Leinwand
     {
         try
         {
-            out.writeObject("redraw");
+            out.writeObject(new Paket("redraw"));
+            out.writeObject(new Paket("isKeyDown"));
+            keyboardBurst = (KeyboardWrapper) in.readObject();
         }
         catch (IOException ex)
+        {
+            ex.printStackTrace();
+        }
+        catch (ClassNotFoundException ex)
         {
             ex.printStackTrace();
         }
@@ -257,8 +260,7 @@ public class Leinwand
     {
         try
         {
-            out.writeObject("FPSLimiter");
-            out.writeObject(use);
+            out.writeObject(new Paket("FPSLimiter", use));
         }
         catch (IOException ex)
         {
@@ -275,8 +277,7 @@ public class Leinwand
     {
         try
         {
-            out.writeObject("getFPSLimit");
-            out.writeObject(0);
+            out.writeObject(new Paket("getFPSLimit"));
             return (int) in.readObject();
         }
         catch (IOException ex)
@@ -299,8 +300,7 @@ public class Leinwand
     {
         try
         {
-            out.writeObject("limitFPS");
-            out.writeObject(fps);
+            out.writeObject(new Paket("limitFPS", fps));
         }
         catch (IOException ex)
         {
@@ -317,8 +317,7 @@ public class Leinwand
     {
         try
         {
-            out.writeObject("getdelta");
-            out.writeObject(0);
+            out.writeObject(new Paket("getdelta"));
             return (int) in.readObject();
         }
         catch (IOException ex)
@@ -342,8 +341,7 @@ public class Leinwand
     {
         try
         {
-            out.writeObject("getfps");
-            out.writeObject(0);
+            out.writeObject(new Paket("getfps"));
             return (double) in.readObject();
         }
         catch (IOException ex)
@@ -366,8 +364,7 @@ public class Leinwand
     {
         try
         {
-            out.writeObject("checkCloseRequest");
-            out.writeObject(0);
+            out.writeObject(new Paket("checkCloseRequest"));
             return (boolean) in.readObject();
         }
         catch (IOException ex)
@@ -394,8 +391,7 @@ public class Leinwand
         var.y = y;
         try
         {
-            out.writeObject("changePosition");
-            out.writeObject(var);
+            out.writeObject(new Paket("changePosition", var));
         }
         catch (IOException ex)
         {
@@ -416,8 +412,7 @@ public class Leinwand
         var.y = dy;
         try
         {
-            out.writeObject("relbewegen");
-            out.writeObject(var);
+            out.writeObject(new Paket("relbewegen", var));
         }
         catch (IOException ex)
         {
@@ -434,8 +429,7 @@ public class Leinwand
     {
         try
         {
-            out.writeObject("setZoom");
-            out.writeObject(zoom);
+            out.writeObject(new Paket("setZoom", zoom));
         }
         catch (IOException ex)
         {
@@ -475,8 +469,7 @@ public class Leinwand
         }
         try
         {
-            out.writeObject("LeinwandData");
-            out.writeObject(data);
+            out.writeObject(new Paket("LeinwandData", data));
         }
         catch (IOException ex)
         {
@@ -492,21 +485,7 @@ public class Leinwand
      */
     public boolean isKeyDown(int key)
     {
-        try
-        {
-            out.writeObject("isKeyDown");
-            out.writeObject(key);
-            return (boolean) in.readObject();
-        }
-        catch (IOException ex)
-        {
-            ex.printStackTrace();
-        }
-        catch (ClassNotFoundException ex)
-        {
-            ex.printStackTrace();
-        }
-        return true;
+        return keyboardBurst.keyStates[key];
     }
 
     /**
@@ -516,8 +495,7 @@ public class Leinwand
     {
         try
         {
-            out.writeObject("getMouseX");
-            out.writeObject(0);
+            out.writeObject(new Paket("getMouseX"));
             return (int) in.readObject();
         }
         catch (IOException ex)
@@ -538,8 +516,7 @@ public class Leinwand
     {
         try
         {
-            out.writeObject("getMouseY");
-            out.writeObject(0);
+            out.writeObject(new Paket("getMouseY"));
             return (int) in.readObject();
         }
         catch (IOException ex)
@@ -562,8 +539,7 @@ public class Leinwand
     {
         try
         {
-            out.writeObject("getMouseDX");
-            out.writeObject(0);
+            out.writeObject(new Paket("getMouseDX"));
             return (int) in.readObject();
         }
         catch (IOException ex)
@@ -586,8 +562,7 @@ public class Leinwand
     {
         try
         {
-            out.writeObject("getMouseDY");
-            out.writeObject(0);
+            out.writeObject(new Paket("getMouseDY"));
             return (int) in.readObject();
         }
         catch (IOException ex)
@@ -610,8 +585,7 @@ public class Leinwand
     {
         try
         {
-            out.writeObject("getDMouseWheel");
-            out.writeObject(0);
+            out.writeObject(new Paket("getDMouseWheel"));
             return (int) in.readObject();
         }
         catch (IOException ex)

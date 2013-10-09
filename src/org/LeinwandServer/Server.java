@@ -110,7 +110,7 @@ public class Server
             }
             else if (thread.id.equals("isKeyDown"))
             {
-                thread.object = leinwand.isKeyDown((int) thread.object);
+                thread.object = leinwand.isKeyDown();
             }
             else if (thread.id.equals("getMouseX"))
             {
@@ -275,23 +275,15 @@ public class Server
                     //Wait for the data to be processed
                 }
 
+                Paket paket;
+
                 //Read the next Object
-                id = (String) in.readObject();
+                paket = (Paket) in.readObject();
+                this.id = paket.id;
+                this.object = paket.object;
 
                 //Determine, what will be next send
-                if (id.equals("OBJECT_2D")
-                        || id.equals("FPSLimiter")
-                        || id.equals("LeinwandData")
-                        || id.equals("removeOBJECT_2D")
-                        || id.equals("limitFPS")
-                        || id.equals("changePosition")
-                        || id.equals("relbewegen")
-                        || id.equals("setZoom"))
-                {
-                    //new Object will be send; Register at the Leinwand.
-                    this.object = in.readObject();
-                }
-                else if (id.equals("close"))
+                if (id.equals("close"))
                 {
                     synchronized ((Object) newData)
                     {
@@ -314,7 +306,6 @@ public class Server
                         || id.equals("getMouseDY")
                         || id.equals("getDMouseWheel"))
                 {
-                    this.object = in.readObject();
                     //Set the index to new Data
                     synchronized ((Object) newData)
                     {
@@ -330,6 +321,7 @@ public class Server
                     }
 
                     //and respond to the request
+                    out.reset();
                     out.writeObject(object);
                 }
                 else
@@ -339,8 +331,6 @@ public class Server
                         this.newData = true;
                     }
                 }
-
-                //System.out.println("Client requested: " + id);
             }
         }
     }

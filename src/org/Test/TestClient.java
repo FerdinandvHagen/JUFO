@@ -21,12 +21,12 @@ public class TestClient
         recht.setzeFarbe("rot");
         recht.setzeSichtbarkeit(true);
         recht.ladeTextur("C:/Users/ADMIN/Documents/NetBeansProjects/F3DGL/0EAE5E44.jpg");
-        
+
         Mouse maus = new Mouse();
         maus.setzeSichtbarkeit(true);
-        
-        
-        Text text = new Text(10,10, "FPS");
+
+
+        Text text = new Text(10, 10, "FPS");
         text.setzeSichtbarkeit(true);
 
         leinwand.useFPSLimiter(false);
@@ -48,8 +48,8 @@ public class TestClient
             {
                 recht.relbewegen(-10, 0);
             }
-            recht.bewegen(maus.bx(), maus.by());
-            text.setText("FPS:" +leinwand.getfps());
+            //recht.bewegen(maus.bx(), maus.by());
+            text.setText("FPS:" + leinwand.getfps());
             leinwand.redraw();
         }
 
