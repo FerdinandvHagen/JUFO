@@ -14,6 +14,13 @@ public class Kreis extends OBJECT_2D {
 
     private double r;
 
+    /**
+     * Erstellt einen neuen Kreis
+     *
+     * @param x x-Koordinate des Kreis
+     * @param y y-Koordinate des Kreis
+     * @param r Radius des Kreises
+     */
     public Kreis(int x, int y, int r) {
         this.x = x;
         this.y = y;
@@ -21,6 +28,13 @@ public class Kreis extends OBJECT_2D {
         setzeFarbe("schwarz");
     }
 
+    /**
+     * Erstellt einen neuen Kreis
+     *
+     * @param x x-Koordinate des Kreis
+     * @param y y-Koordinate des Kreis
+     * @param r Radius des Kreises
+     */
     public Kreis(double x, double y, double r) {
         this.x = x;
         this.y = y;
@@ -52,53 +66,34 @@ public class Kreis extends OBJECT_2D {
             glVertex2f(xs, ys);
         }
         glEnd();
-        
+
         if (rotation != 0) {
             processTranslationsTwo();
         }
     }
 
-    public void bewegen(int x, int y) {
-        this.x = x;
-        this.y = y;
-    }
-
-    public double getXd() {
-        return this.x;
-    }
-
-    public int getX() {
-        return (int) this.x;
-    }
-
-    public double getYd() {
-        return this.y;
-    }
-
-    public int getY() {
-        return (int) this.y;
-    }
-
-    public double getRd() {
+    /**
+     * Ermittelt den Radius des Kreises
+     *
+     * @return Radius des Kreises
+     */
+    public double r() {
         return this.r;
     }
 
-    public int getR() {
+    public int br() {
         return (int) this.r;
     }
-    
-    public int br()
-    {
-        return (int)this.r;
-    }
-    
-    public void r(double r)
-    {
+
+    /**
+     * Setzt den Radius des Kreises
+     * @param r neuer Radius
+     */
+    public void r(double r) {
         this.r = r;
     }
-    
-    public boolean schneidet(OBJECT_2D obj)
-    {
+
+    public boolean schneidet(OBJECT_2D obj) {
         return PhysicEngine.checkviolation(obj, this);
     }
 }

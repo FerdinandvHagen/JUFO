@@ -18,8 +18,29 @@ public class Dreieck extends OBJECT_2D {
     private Texture textur;
     private int scalex;
 
+    /**
+     * Erstellt ein neues Dreieck
+     *
+     * @param x x-Koordiante des oberen linken Punkts
+     * @param y y-Koordinate des oberen linken Punkts
+     * @param w Breite des Dreiecks
+     * @param h Höhe des Dreiecks
+     */
     public Dreieck(double x, double y, double w, double h) {
         createDreieck(x, y, w, h, 'a');
+    }
+
+    /**
+     * Erstellt ein neues Dreieck
+     *
+     * @param x x-Koordiante des oberen linken Punkts
+     * @param y y-Koordinate des oberen linken Punkts
+     * @param w Breite des Dreiecks
+     * @param h Höhe des Dreiecks
+     * @param dir Orientierung des Dreiecks
+     */
+    public Dreieck(double x, double y, double w, double h, char dir) {
+        createDreieck(x, y, w, h, dir);
     }
 
     private void createDreieck(double x, double y, double w, double h, char dir) {
@@ -28,13 +49,44 @@ public class Dreieck extends OBJECT_2D {
         this.w = w;
         this.h = h;
         this.direction = dir;
-        setzeFarbe("schwarz");
-        textur = null;
+        this.setzeFarbe("schwarz");
         this.scalex = 1;
     }
 
-    public Dreieck(double x, double y, double w, double h, char dir) {
-        createDreieck(x, y, w, h, dir);
+    /**
+     * Setze die Breite des Dreiecks
+     *
+     * @param w neue Breite des Dreiecks
+     */
+    public void setzeW(double w) {
+        this.w = w;
+    }
+
+    /**
+     * Setze die Höhe des Dreiecks
+     *
+     * @param h neue Höhe des Dreiecks
+     */
+    public void setzeH(double h) {
+        this.h = h;
+    }
+
+    /**
+     * Gibt die Breite des Dreiecks zurück
+     *
+     * @return Breite des Dreiecks
+     */
+    public double w() {
+        return this.w;
+    }
+
+    /**
+     * Gibt die Höhe des Dreiecks zurück
+     *
+     * @return Höhe des Dreiecks
+     */
+    public double h() {
+        return this.h;
     }
 
     public void zeichnen(double factor) {
@@ -62,7 +114,7 @@ public class Dreieck extends OBJECT_2D {
             glColor4d(colorrd, colorgr, colorbl, alpha);
             glBegin(GL_TRIANGLES);
         }
-        
+
         double scw = this.w / this.scalex;
         double sch = this.h / this.scalex;
 
@@ -85,7 +137,7 @@ public class Dreieck extends OBJECT_2D {
                         displayRechteck(scbx, scby, scw, sch);
                     }
                 } else if (this.direction == 'b') {
-                    if(scx < scalex - scy + 1) {
+                    if (scx < scalex - scy + 1) {
                         continue;
                     }
                     if (scx == scalex - scy + 1) {
@@ -94,8 +146,7 @@ public class Dreieck extends OBJECT_2D {
                         displayRechteck(scbx, scby, scw, sch);
                     }
                 } else if (this.direction == 'c') {
-                    if(scx < scy)
-                    {
+                    if (scx < scy) {
                         continue;
                     }
                     if (scx == scy) {
@@ -104,7 +155,7 @@ public class Dreieck extends OBJECT_2D {
                         displayRechteck(scbx, scby, scw, sch);
                     }
                 } else if (this.direction == 'd') {
-                    if(scx > scalex - scy + 1) {
+                    if (scx > scalex - scy + 1) {
                         continue;
                     }
                     if (scx == scalex - scy + 1) {
@@ -127,25 +178,34 @@ public class Dreieck extends OBJECT_2D {
         glEnd();
         glDisable(GL_TEXTURE_2D);
 
-
         if (rotation != 0) {
             processTranslationsTwo();
         }
     }
 
-    public void turn(char turn) {
+    /**
+     * Orientierung des Dreiecks ändern
+     *
+     * @param turn neue Orientierung des Dreiecks
+     */
+    public void drehen(char turn) {
         this.direction = turn;
     }
 
-    public void bewegen(int x, int y) {
-        this.x = x;
-        this.y = y;
-    }
-
+    /**
+     * Lädt eine Textur auf das Dreieck
+     *
+     * @param textur Pfad der zu ladenden Textur
+     */
     public void ladeTextur(String textur) {
         this.textur = Leinwand.gibLeinwand().loadTexture(textur);
     }
 
+    /**
+     * Hochskalieren für Textur
+     *
+     * @param scale Anzahl der Abschnitte
+     */
     public void scaleup(int scale) {
         this.scalex = scale;
     }
@@ -224,42 +284,17 @@ public class Dreieck extends OBJECT_2D {
         glTexCoord2f(1, 0);
         glVertex2d(scbx + scw, scby);
     }
-    
+
     //Boundingzeug
-    public int bh()
-    {
+    public int bh() {
         return (int) this.h;
     }
 
-    public int bw()
-    {
+    public int bw() {
         return (int) this.w;
     }
-    
-    public char btype()
-    {
+
+    public char btype() {
         return this.direction;
-    }
-    
-    public double getYd()
-    {
-        return this.y;
-    }
-    
-    public double getXd()
-    {
-        return this.x;
-    }
-    
-    public void setzeW(double w){
-        this.w=w;
-    }
-    public void setzeH(double h){
-        this.h=h;
-    }
-    
-    public boolean schneidet(OBJECT_2D obj)
-    {
-        return PhysicEngine.checkviolation(obj, this);
     }
 }

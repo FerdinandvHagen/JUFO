@@ -11,15 +11,21 @@ import org.newdawn.slick.opengl.Texture;
  *
  * @author ADMIN
  */
-public class Rechteck extends OBJECT_2D
-{
+public class Rechteck extends OBJECT_2D {
 
     private double w, h;
     private Texture textur;
     private int scalex, scaley;
 
-    public Rechteck(int x, int y, int w, int h)
-    {
+    /**
+     * Erstellt ein neues Rechteck
+     *
+     * @param x x-Koordinate des Rechtecks
+     * @param y y-Koordinate des Rechtecks
+     * @param w Breite des Rechtecks
+     * @param h Höhe des Rechtecks
+     */
+    public Rechteck(int x, int y, int w, int h) {
         super();
         this.x = x;
         this.y = y;
@@ -30,8 +36,15 @@ public class Rechteck extends OBJECT_2D
         setzeFarbe("schwarz");
     }
 
-    public Rechteck(double x, double y, double w, double h)
-    {
+    /**
+     * Erstellt ein neues Rechteck
+     *
+     * @param x x-Koordinate des Rechtecks
+     * @param y y-Koordinate des Rechtecks
+     * @param w Breite des Rechtecks
+     * @param h Höhe des Rechtecks
+     */
+    public Rechteck(double x, double y, double w, double h) {
         super();
         this.x = x;
         this.y = y;
@@ -42,33 +55,52 @@ public class Rechteck extends OBJECT_2D
         setzeFarbe("schwarz");
     }
 
-    public void scaleup(int x, int y)
-    {
+    /**
+     * Unterteilt das Rechteck in x mal y Einzelrechtecke (z.B. damit die Textur
+     * feiner wird)
+     *
+     * @param x Anzahl der Elemente in x-Richtung
+     * @param y Anzahl der ELemente in y-Richtung
+     */
+    public void aufskalieren(int x, int y) {
         this.scalex = x;
         this.scaley = y;
     }
 
-    public void zeichnen(double factor)
-    {
+    /**
+     * Ermittelt die Breite des Rechtecks
+     *
+     * @return Breite des Rechtecks
+     */
+    public double w() {
+        return this.w;
+    }
+
+    /**
+     * Ermittelt die Höhe des Rechtecks
+     *
+     * @return Höhe des Rechtecks
+     */
+    public double h() {
+        return this.h;
+    }
+
+    public void zeichnen(double factor) {
         double pointx, pointy;
-        if (rotation != 0)
-        {
+        if (rotation != 0) {
             transx = x + (w / 2);
             transy = y + (h / 2);
             pointx = -w / 2;
             pointy = -h / 2;
 
             processTranslationsOne();
-        }
-        else
-        {
+        } else {
             pointx = x;
             pointy = y;
         }
 
         //Hier wird das Objekt gezeichnet
-        if (textur == null)
-        {
+        if (textur == null) {
             glColor4d(colorrd, colorgr, colorbl, alpha);
             glBegin(GL_QUADS);
             glVertex2d(pointx, pointy);
@@ -76,9 +108,7 @@ public class Rechteck extends OBJECT_2D
             glVertex2d(pointx + w, pointy + h);
             glVertex2d(pointx, pointy + h);
             glEnd();
-        }
-        else
-        {
+        } else {
             glColor4d(1f, 1f, 1f, 1f);
             glDisable(GL_TEXTURE_2D);
             glEnable(GL_TEXTURE_2D);
@@ -88,10 +118,8 @@ public class Rechteck extends OBJECT_2D
             double scw = this.w / this.scalex;
             double sch = this.h / this.scaley;
 
-            for (int scx = this.scalex; scx > 0; scx--)
-            {
-                for (int scy = this.scaley; scy > 0; scy--)
-                {
+            for (int scx = this.scalex; scx > 0; scx--) {
+                for (int scy = this.scaley; scy > 0; scy--) {
                     double scbx = pointx + ((scx - 1) * scw);
                     double scby = pointy + ((scy - 1) * sch);
                     glTexCoord2f(1, 0);
@@ -111,84 +139,44 @@ public class Rechteck extends OBJECT_2D
             glEnd();
             glDisable(GL_TEXTURE_2D);
         }
-        if (rotation != 0)
-        {
+        if (rotation != 0) {
             processTranslationsTwo();
         }
     }
 
-    public void bewegen(int x, int y)
-    {
-        this.x = x;
-        this.y = y;
-    }
-
-    public void ladeTextur(String textur)
-    {
+    /**
+     * Lädt die angegebene Textur auf das Rechteck
+     *
+     * @param textur Pfad zu der Textur
+     */
+    public void ladeTextur(String textur) {
         this.textur = Leinwand.gibLeinwand().loadTexture(textur);
     }
 
-    public double getXd()
-    {
-        return this.x;
-    }
-
-    public int getX()
-    {
-        return (int) this.x;
-    }
-
-    public double getYd()
-    {
-        return this.y;
-    }
-
-    public int getY()
-    {
-        return (int) this.y;
-    }
-
-    public double getWd()
-    {
-        return this.w;
-    }
-
-    public int getW()
-    {
-        return (int) this.w;
-    }
-
-    public double getHd()
-    {
-        return this.h;
-    }
-
-    public int getH()
-    {
-        return (int) this.h;
-    }
-
     //Boundingzeug
-    public int bh()
-    {
+    public int bh() {
         return (int) this.h;
     }
 
-    public int bw()
-    {
+    public int bw() {
         return (int) this.w;
     }
 
-    public void setzeW(double w){
-        this.w=w;
+    /**
+     * Setzt die Breite des Rechtecks
+     *
+     * @param w neue Breite des Rechtecks
+     */
+    public void setzeW(double w) {
+        this.w = w;
     }
-    public void setzeH(double h){
-        this.h=h;
-    }
-    
 
-    public boolean schneidet(OBJECT_2D obj)
-    {
-        return PhysicEngine.checkviolation(obj, this);
+    /**
+     * Setzt die Höhe des Rechtecks
+     *
+     * @param h neue Höhe des Rechtecks
+     */
+    public void setzeH(double h) {
+        this.h = h;
     }
 }

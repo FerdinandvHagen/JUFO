@@ -10,8 +10,13 @@ import org.lwjgl.opengl.DisplayMode;
 import java.util.ArrayList;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.URL;
 import java.nio.ByteBuffer;
+import java.util.Properties;
 import javax.imageio.ImageIO;
 
 import static org.lwjgl.opengl.GL11.*;
@@ -29,12 +34,11 @@ import org.lwjgl.opengl.GL11;
  * @author Ferdinand von Hagen
  * @version 1.1
  */
-public class Leinwand
-{
+public class Leinwand {
 
     LeinwandData data;
-    public void setLeinwandData(LeinwandData data)
-    {
+
+    public void setLeinwandData(LeinwandData data) {
         this.data = data;
     }
     //Singleton ist das erste Objekt der Klasse Leinwand
@@ -42,10 +46,98 @@ public class Leinwand
     //und bekommen ein Handle
     public static Leinwand leinwandSingleton;
 
-    private Leinwand()
-    {
+    private Leinwand() {
+        String lwjgl = "", jinput = "", jinput2 = "", openAL = "";
+        System.out.println("System detected: " + getOsName() + "; Using " + getDataModel2() + "-bit Version;");
+        System.out.println("Loading natives");
+        
+        if (getOsName() == "windows") {
+            if (getDataModel2().contains("64")) {
+                lwjgl = createTemp("/lwjgl64.dll", "lwjgl64.dll");
+                jinput = createTemp("/jinput-raw_64.dll", "jinput-raw_64.dll");
+                jinput2 = createTemp("/jinput-dx8_64.dll", "jinput-dx8_64.dll");
+                openAL = createTemp("/OpenAL64.dll", "OpenAL64.dll");
+            } else {
+                lwjgl = createTemp("/lwjgl.dll", "lwjgl.dll");
+                jinput = createTemp("/jinput-raw.dll", "jinput-raw.dll");
+                jinput2 = createTemp("/jinput-dx8.dll", "jinput-dx8.dll");
+                openAL = createTemp("/OpenAL32.dll", "OpenAL32.dll");
+            }
+
+            System.load(lwjgl);
+            System.load(jinput);
+            System.load(jinput2);
+            System.load(openAL);
+        } else if (getOsName() == "mac") {
+            lwjgl = createTemp("/liblwjgl.jnilib", "liblwjgl.jnilib");
+            jinput = createTemp("/libjinput-osx.jnilib", "libjinput-osx.jnilib");
+            openAL = createTemp("/openal.jnilib", "openal.jnilib");
+
+            System.load(lwjgl);
+            System.load(jinput);
+            System.load(openAL);
+        } else {
+            lwjgl = createTemp("/liblwjgl" + getDataModel() + ".so", "liblwjgl" + getDataModel() + ".so");
+            jinput = createTemp("/libjinput-linux" + getDataModel() + ".so", "libjinput-linux" + getDataModel() + ".so");
+            openAL = createTemp("/libopenal" + getDataModel() + ".so", "libopenal" + getDataModel() + ".so");
+
+            System.load(lwjgl);
+            System.load(jinput);
+            System.load(openAL);
+        }
+
         data = new LeinwandData();
         create();
+    }
+
+    private String getDataModel() {
+        if (getDataModel2() == "64") {
+            return "64";
+        }
+        return "";
+    }
+
+    private String getDataModel2() {
+        return System.getProperty("sun.arch.data.model");
+    }
+
+    private String getOsName() {
+        String os = "";
+        if (System.getProperty("os.name").toLowerCase().indexOf("windows") > -1) {
+            os = "windows";
+        } else if (System.getProperty("os.name").toLowerCase().indexOf("linux") > -1) {
+            os = "linux";
+        } else if (System.getProperty("os.name").toLowerCase().indexOf("mac") > -1) {
+            os = "mac";
+        }
+
+        return os;
+    }
+
+    private String createTemp(String dll, String name) {
+        try {
+            InputStream in = Leinwand.class.getResourceAsStream(dll);
+            File file = new File(name);
+            file.deleteOnExit();
+            OutputStream out = new FileOutputStream(file);
+
+            if (in == null) {
+                System.err.println("Resource not found");
+            } else {
+                byte[] buf = new byte[1024];
+                int len;
+                while ((len = in.read(buf)) > 0) {
+                    out.write(buf, 0, len);
+                }
+                in.close();
+                out.close();
+
+                return file.getAbsolutePath();
+            }
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+        return "";
     }
 
     /**
@@ -53,16 +145,12 @@ public class Leinwand
      *
      * @return eine geöffnete Leinwand.
      */
-    public static Leinwand gibLeinwand()
-    {
-        if (leinwandSingleton == null)
-        {
+    public static Leinwand gibLeinwand() {
+        if (leinwandSingleton == null) {
             leinwandSingleton = new Leinwand();
             System.out.println("Leinwand created");
             return leinwandSingleton;
-        }
-        else
-        {
+        } else {
             return leinwandSingleton;
         }
     }
@@ -77,13 +165,12 @@ public class Leinwand
      * @param title neuer Titel des Fensters.
      * @param fullscreen true, wenn der Bildschirm fullscreen sein soll.
      */
-    public void setWindowSettings(int height, int width, String title, boolean fullscreen)
-    {
+    public void setzeFensterEinstellungen(int height, int width, String title, boolean fullscreen) {
         this.data.height = height;
         this.data.width = width;
         this.data.title = title;
         this.data.fullscreen = fullscreen;
-        this.reopen();
+        this.neuOeffnen();
     }
 
     /**
@@ -91,8 +178,7 @@ public class Leinwand
      *
      * @return Breite des Fensters
      */
-    public int getbreite()
-    {
+    public int holeBreite() {
         return this.data.width;
     }
 
@@ -101,37 +187,31 @@ public class Leinwand
      *
      * @return Höhe des Fensters
      */
-    public int gethoehe()
-    {
+    public int holeHoehe() {
         return this.data.height;
     }
 
-    public void reopen()
-    {
+    /**
+     * Öffnet die Leinwand neu (z.B. um die Einstellungen neu zu laden
+     */
+    public void neuOeffnen() {
         Display.destroy();
         createDisplay();
     }
 
-    private void create()
-    {
+    private void create() {
         this.data.objects = new ArrayList<OBJECT_2D>();
         this.data.background_objects = new ArrayList<OBJECT_2D>();
         this.data.textList = new ArrayList<OBJECT_2D>();
         createDisplay();
     }
-    
-    private void createDisplay()
-    {
-        try
-        {
-            AL.create();
+
+    private void createDisplay() {
+        try {
             // Setze die Höhe udn Breite des Displays, den Titel und erstellt es
-            if (this.data.fullscreen)
-            {
+            if (this.data.fullscreen) {
                 Display.setFullscreen(true);
-            }
-            else
-            {
+            } else {
                 Display.setFullscreen(false);
                 Display.setDisplayMode(new DisplayMode(this.data.width, this.data.height));
             }
@@ -140,9 +220,7 @@ public class Leinwand
             Display.create();
             this.data.height = Display.getHeight();
             this.data.width = Display.getWidth();
-        }
-        catch (LWJGLException e)
-        {
+        } catch (LWJGLException e) {
             e.printStackTrace();
             Display.destroy();
             System.exit(1);
@@ -160,8 +238,7 @@ public class Leinwand
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     }
 
-    private void applyOrtho()
-    {
+    private void applyOrtho() {
         glLoadIdentity();
         glPushAttrib(GL_TRANSFORM_BIT);
         glMatrixMode(GL_MODELVIEW);
@@ -172,8 +249,7 @@ public class Leinwand
     /**
      * Löscht alle gespeicherten Daten und schließt das Fenster.
      */
-    public void close()
-    {
+    public void schliessen() {
         //Delete all textures
         this.data.textureList.destroy();
         //Destroy the Display
@@ -186,21 +262,17 @@ public class Leinwand
      *
      * @param add zeigt das Element an.
      */
-    public void addObject(OBJECT_2D add)
-    {
-        if (add.isBackground())
-        {
+    public void addObject(OBJECT_2D add) {
+        if (add.istHintergrund()) {
             //Das Objekt ist für den Hintergrund e.g. für die Landschaft bestimmt
             this.data.background_objects.remove(add);
             this.data.background_objects.add(add);
         }
-        if (add.isText())
-        {
+        if (add.istText()) {
             this.data.textList.remove(add);    //entferne die Figur, falls vorhanden
             this.data.textList.add(add);       //neu anfügen
         }
-        if (!add.isBackground() && !add.isText())
-        {
+        if (!add.istHintergrund() && !add.istText()) {
             this.data.objects.remove(add);
             this.data.objects.add(add);
         }
@@ -211,8 +283,7 @@ public class Leinwand
      *
      * @param add Objekt zum löschen
      */
-    public void removeObject(OBJECT_2D add)
-    {
+    public void removeObject(OBJECT_2D add) {
         this.data.objects.remove(add);
         this.data.background_objects.remove(add);
         this.data.textList.remove(add);
@@ -221,47 +292,38 @@ public class Leinwand
     /**
      * Zeichnet das Bild neu.
      */
-    public void redraw()
-    {
-        if (this.isKeyDown(this.KEY_LCONTROL) && this.isKeyDown(this.KEY_S))
-        {
+    public void neuZeichnen() {
+        if (this.istTasteGedrückt(this.KEY_LCONTROL) && this.istTasteGedrückt(this.KEY_S)) {
             this.data.screenshotcounter++;
-            this.takeScreenshot("screenshot" + this.data.screenshotcounter + ".jpg");
+            this.schiesseBildschirmfoto("screenshot" + this.data.screenshotcounter + ".jpg");
         }
-        if (Display.isCloseRequested())
-        {
+        if (Display.isCloseRequested()) {
             this.data.iscloserequested = true;
             System.out.println("Display Close Requested");
-        }
-        else
-        {
+        } else {
             glClear(GL_COLOR_BUFFER_BIT);
             applyOrtho();
 
             //Erst den Hintergrund zeichnen
-            for (OBJECT_2D obj : this.data.background_objects)
-            {
+            for (OBJECT_2D obj : this.data.background_objects) {
                 obj.zeichnen(this.data.factor);
             }
             //Dann den Rest
-            for (OBJECT_2D obj : this.data.objects)
-            {
+            for (OBJECT_2D obj : this.data.objects) {
                 obj.zeichnen(this.data.factor);
             }
             //Und dann noch den Text
-            for (OBJECT_2D text : this.data.textList)
-            {
+            for (OBJECT_2D text : this.data.textList) {
                 text.zeichnen(this.data.factor);
             }
             glEnable(GL_TEXTURE_2D);
             glDisable(GL_TEXTURE_2D);
             Display.update();
-            if (this.data.fpslimiter)
-            {
+            if (this.data.fpslimiter) {
                 Display.sync(this.data.fpslimit);
             }
         }
-        
+
         //FPS berechnen
         this.data.elapsed = System.nanoTime() - this.data.lastNanoTime;
         this.data.fps = 1000000000 / this.data.elapsed;
@@ -269,36 +331,33 @@ public class Leinwand
     }
 
     /**
-     * If you want to disable or enable the FPSLimiter.
+     * Startet oder stoppt den FPSLimiter
      *
-     * @param use false to disable the limit
+     * @param use true, um das FPSLimit zu aktivieren; false um es zu
+     * deaktivieren
      */
-    public void useFPSLimiter(boolean use)
-    {
+    public void nutzeFPSLimit(boolean use) {
         this.data.fpslimiter = use;
     }
 
     /**
-     * Returns current settings of the FPS-Limiter
+     * Gibt die aktuelle Einstellung des FPSLimiters zurück
      *
-     * @return 0 if switched off; >0 the current FPSLimit;
+     * @return 0, wenn er abgeschatet ist; >0 das aktuelle Limit
      */
-    public int getFPSLimit()
-    {
-        if (this.data.fpslimiter == false)
-        {
+    public int holeFPSLimit() {
+        if (this.data.fpslimiter == false) {
             return 0;
         }
         return this.data.fpslimit;
     }
 
     /**
-     * Enables the FPSLimiter and sets it to the value defined by fps.
+     * Aktiviert den FPSLimiter
      *
-     * @param fps The limit of fps you want to have.
+     * @param fps Das gewünschte Framelimit
      */
-    public void limitFPS(int fps)
-    {
+    public void limitiereFPS(int fps) {
         this.data.fpslimiter = true;
         this.data.fpslimit = fps;
     }
@@ -308,8 +367,7 @@ public class Leinwand
      *
      * @return ms seit letzten Aufruf der Funktion
      */
-    public long getdelta()
-    {
+    public long holeDelta() {
         return this.data.elapsed;
 
     }
@@ -320,8 +378,7 @@ public class Leinwand
      * @return fps
      *
      */
-    public double getfps()
-    {
+    public double holeFPS() {
         return this.data.fps;
     }
 
@@ -330,8 +387,7 @@ public class Leinwand
      *
      * @return true, wenn der Benutzer das Fenster schließen will.
      */
-    public boolean checkCloseRequest()
-    {
+    public boolean ueberpruefeAnfrageSchliessen() {
         return this.data.iscloserequested;
     }
 
@@ -341,8 +397,7 @@ public class Leinwand
      * @param x neue x-Position.
      * @param y neue y-Position.
      */
-    public void changePosition(int x, int y)
-    {
+    public void bewegen(int x, int y) {
         this.data.transformx = x;
         this.data.transformy = y;
     }
@@ -353,8 +408,7 @@ public class Leinwand
      * @param x Veränderung der x-Position.
      * @param y Veränderung der y-Position.
      */
-    public void relbewegen(int dx, int dy)
-    {
+    public void relativBewegen(int dx, int dy) {
         this.data.transformx += dx;
         this.data.transformy += dy;
     }
@@ -364,8 +418,7 @@ public class Leinwand
      *
      * @param zoom Wert des Zooms (normal: 1.0)
      */
-    public void setZoom(double zoom)
-    {
+    public void setzeZoom(double zoom) {
         this.data.factor = zoom;
     }
 
@@ -375,8 +428,7 @@ public class Leinwand
      * @param texture String mit Pfad zur Textur.
      * @return Eine geladene Textur.
      */
-    public Texture loadTexture(String texture)
-    {
+    public Texture loadTexture(String texture) {
         return this.data.textureList.loadTexture(texture);
     }
 
@@ -384,30 +436,24 @@ public class Leinwand
      * Verschiebt das Bild anhand der Eingaben der Pfeiltasten. Nützlich für
      * Übungen, Test, ...
      */
-    public void processKeyboardforTranslation()
-    {
-        if (Keyboard.isKeyDown(Keyboard.KEY_UP))
-        {
+    public void verarbeiteTastaturEingabe() {
+        if (Keyboard.isKeyDown(Keyboard.KEY_UP)) {
             this.data.transformy = this.data.transformy + 20;
         }
-        if (Keyboard.isKeyDown(Keyboard.KEY_DOWN))
-        {
+        if (Keyboard.isKeyDown(Keyboard.KEY_DOWN)) {
             this.data.transformy = this.data.transformy - 20;
         }
-        if (Keyboard.isKeyDown(Keyboard.KEY_RIGHT))
-        {
+        if (Keyboard.isKeyDown(Keyboard.KEY_RIGHT)) {
             this.data.transformx = this.data.transformx - 20;
         }
-        if (Keyboard.isKeyDown(Keyboard.KEY_LEFT))
-        {
+        if (Keyboard.isKeyDown(Keyboard.KEY_LEFT)) {
             this.data.transformx = this.data.transformx + 20;
         }
-        if (isMouseKeyDown(0))
-        {
-            double xg = getCorrectedMouseX();
-            double yg = getCorrectedMouseY();
-            xg = xg / getbreite();
-            yg = yg / gethoehe();
+        if (istMausTasteGedrueckt(0)) {
+            double xg = holeKorrigierteMausX();
+            double yg = this.holeKorrigierteMausY();
+            xg = xg / holeBreite();
+            yg = yg / holeHoehe();
             System.out.println("X  " + xg + "  Y  " + yg);
         }
     }
@@ -418,24 +464,21 @@ public class Leinwand
      * @param key zu testende Taste
      * @return true, wenn Taste gedrückt
      */
-    public boolean isKeyDown(int key)
-    {
+    public boolean istTasteGedrückt(int key) {
         return Keyboard.isKeyDown(key);
     }
 
     /**
      * @return x-Position der Maus
      */
-    public int getMouseX()
-    {
+    public int holeMausX() {
         return Mouse.getX();
     }
 
     /**
      * @return y-Position der Maus
      */
-    public int getMouseY()
-    {
+    public int holeMausY() {
         return this.data.height - Mouse.getY();
     }
 
@@ -444,8 +487,7 @@ public class Leinwand
      *
      * @return x-Veränderung der Lage der Maus seit letztem Aufruf
      */
-    public int getMouseDX()
-    {
+    public int holeMausAenderungX() {
         return Mouse.getDX();
     }
 
@@ -454,8 +496,7 @@ public class Leinwand
      *
      * @return x-Veränderung der Lage der Maus seit letztem Aufruf
      */
-    public int getMouseDY()
-    {
+    public int holeMausAenderungY() {
         return Mouse.getDY();
     }
 
@@ -464,8 +505,7 @@ public class Leinwand
      *
      * @return Delta des Mausrads
      */
-    public int getDMouseWheel()
-    {
+    public int holeMausAenderungRad() {
         return Mouse.getDWheel();
     }
 
@@ -474,9 +514,8 @@ public class Leinwand
      *
      * @return x-Koordinate des Mauszeigers auf dem Koordinatensystem.
      */
-    public int getCorrectedMouseX()
-    {
-        return this.getMouseX() - this.data.transformx;
+    public int holeKorrigierteMausX() {
+        return this.holeMausX() - this.data.transformx;
     }
 
     /**
@@ -484,9 +523,8 @@ public class Leinwand
      *
      * @return y-Koordinate des Mauszeigers auf dem Koordinatensystem.
      */
-    public int getCorrectedMouseY()
-    {
-        return this.getMouseY() - this.data.transformy;
+    public int holeKorrigierteMausY() {
+        return this.holeMausY() - this.data.transformy;
     }
 
     /**
@@ -495,18 +533,15 @@ public class Leinwand
      * @param index Tastenindex (normal 0 od. 1)
      * @return true, wenn die Taste gedrückt ist
      */
-    public boolean isMouseKeyDown(int index)
-    {
+    public boolean istMausTasteGedrueckt(int index) {
         return Mouse.isButtonDown(index);
     }
 
     /**
      * Gibt die möglichen Maustasten samt Index aus.
      */
-    public void printAvailableMouseKeys()
-    {
-        for (int i = Mouse.getButtonCount(); i > 0; i--)
-        {
+    public void zeigeVerfuegbareMausTasten() {
+        for (int i = Mouse.getButtonCount(); i > 0; i--) {
             System.out.println("Key: Name: " + Mouse.getButtonName(i) + " index: " + i);
         }
     }
@@ -516,17 +551,14 @@ public class Leinwand
      *
      * @param visible Beeinflusst die Sichtbarkeit des Mauszeigers
      */
-    public void makeMouseVisible(boolean visible)
-    {
+    public void macheMausSichtbar(boolean visible) {
         Mouse.setGrabbed(visible);
     }
     private saveScreenshot savescreen;
     private long lastscreenshot = System.currentTimeMillis();
 
-    public void takeScreenshot(String file)
-    {
-        if (lastscreenshot + 500 > System.currentTimeMillis())
-        {
+    public void schiesseBildschirmfoto(String file) {
+        if (lastscreenshot + 500 > System.currentTimeMillis()) {
             return;
         }
         lastscreenshot = System.currentTimeMillis();
@@ -542,7 +574,7 @@ public class Leinwand
         Thread s = new Thread(rs, "saving Screenshot");
         s.start();
     }
-    
+
     //Key Definitions
     public static final int EVENT_SIZE = 18;
     public static final int CHAR_NONE = 0;
@@ -682,31 +714,26 @@ public class Leinwand
     public static final int MOUSE_KEY_LEFT = 0;
     public static final int MOUSE_KEY_RIGHT = 1;
 
-    private class saveScreenshot implements Runnable
-    {
+    private class saveScreenshot implements Runnable {
 
         private ByteBuffer buffer;
         private String path;
         private int height, width;
 
-        public saveScreenshot(String path, ByteBuffer buffer, int height, int width)
-        {
+        public saveScreenshot(String path, ByteBuffer buffer, int height, int width) {
             this.buffer = buffer;
             this.path = path;
             this.height = height;
             this.width = width;
         }
 
-        public void run()
-        {
+        public void run() {
             File screenshot = new File(path); // The file to save to.
             String format = "JPG"; // Example: "PNG" or "JPG"
             BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
             int bpp = 4;
-            for (int x = 0; x < width; x++)
-            {
-                for (int y = 0; y < height; y++)
-                {
+            for (int x = 0; x < width; x++) {
+                for (int y = 0; y < height; y++) {
                     int i = (x + (width * y)) * bpp;
                     int r = buffer.get(i) & 0xFF;
                     int g = buffer.get(i + 1) & 0xFF;
@@ -715,12 +742,9 @@ public class Leinwand
                 }
             }
 
-            try
-            {
+            try {
                 ImageIO.write(image, format, screenshot);
-            }
-            catch (IOException e)
-            {
+            } catch (IOException e) {
                 e.printStackTrace();
             }
         }
