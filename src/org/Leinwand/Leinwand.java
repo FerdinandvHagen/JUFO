@@ -50,7 +50,7 @@ public class Leinwand {
         String lwjgl = "", jinput = "", jinput2 = "", openAL = "";
         System.out.println("System detected: " + getOsName() + "; Using " + getDataModel2() + "-bit Version;");
         System.out.println("Loading natives");
-        
+
         if (getOsName() == "windows") {
             if (getDataModel2().contains("64")) {
                 lwjgl = createTemp("/lwjgl64.dll", "lwjgl64.dll");
@@ -64,26 +64,33 @@ public class Leinwand {
                 openAL = createTemp("/OpenAL32.dll", "OpenAL32.dll");
             }
 
-            System.load(lwjgl);
-            System.load(jinput);
-            System.load(jinput2);
-            System.load(openAL);
+            if (lwjgl != "") {
+                System.load(lwjgl);
+                System.load(jinput);
+                System.load(jinput2);
+                System.load(openAL);
+            }
+
         } else if (getOsName() == "mac") {
             lwjgl = createTemp("/liblwjgl.jnilib", "liblwjgl.jnilib");
             jinput = createTemp("/libjinput-osx.jnilib", "libjinput-osx.jnilib");
             openAL = createTemp("/openal.jnilib", "openal.jnilib");
 
-            System.load(lwjgl);
-            System.load(jinput);
-            System.load(openAL);
+            if (lwjgl != "") {
+                System.load(lwjgl);
+                System.load(jinput);
+                System.load(openAL);
+            }
         } else {
             lwjgl = createTemp("/liblwjgl" + getDataModel() + ".so", "liblwjgl" + getDataModel() + ".so");
             jinput = createTemp("/libjinput-linux" + getDataModel() + ".so", "libjinput-linux" + getDataModel() + ".so");
             openAL = createTemp("/libopenal" + getDataModel() + ".so", "libopenal" + getDataModel() + ".so");
 
-            System.load(lwjgl);
-            System.load(jinput);
-            System.load(openAL);
+            if (lwjgl != "") {
+                System.load(lwjgl);
+                System.load(jinput);
+                System.load(openAL);
+            }
         }
 
         data = new LeinwandData();
@@ -122,7 +129,7 @@ public class Leinwand {
             OutputStream out = new FileOutputStream(file);
 
             if (in == null) {
-                System.err.println("Resource not found");
+                System.err.println("Resource " + name + "not found");
             } else {
                 byte[] buf = new byte[1024];
                 int len;
@@ -297,7 +304,7 @@ public class Leinwand {
             this.data.screenshotcounter++;
             this.schiesseBildschirmfoto("screenshot" + this.data.screenshotcounter + ".jpg");
         }
-        if (Display.isCloseRequested()) {
+        if (Display.isCloseRequested() || this.data.iscloserequested) {
             this.data.iscloserequested = true;
             System.out.println("Display Close Requested");
         } else {

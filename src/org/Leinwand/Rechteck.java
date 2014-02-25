@@ -139,6 +139,7 @@ public class Rechteck extends OBJECT_2D {
             glEnd();
             glDisable(GL_TEXTURE_2D);
         }
+        
         if (rotation != 0) {
             processTranslationsTwo();
         }

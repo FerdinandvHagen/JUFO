@@ -30,7 +30,13 @@ public class Tests {
         text.verbinden(true);
         text.setzeSichtbarkeit(true);
         
+        Rechteck rechteck2 = new Rechteck(100, 100, 200,200);
+        rechteck2.ladeTextur("C:\\Users\\ferdinand\\Documents\\NetBeansProjects\\PROJEKT11SCHULE\\src\\Images\\spinner.jpg");
+        rechteck2.setzeSichtbarkeit(true);
+        
         leinwand.nutzeFPSLimit(false);
+        
+        double winkel = 0.0;
 
         while (!leinwand.ueberpruefeAnfrageSchliessen()) {
             if (leinwand.istTasteGedrückt(Leinwand.KEY_0)) {
@@ -39,9 +45,20 @@ public class Tests {
                 rechteck.setzeSichtbarkeit(true);
             }
             
+            //Turn the Icon!
+            winkel += (double)360.0/leinwand.holeFPS()*2;
+            if(winkel>360){
+                winkel = 0;
+            }
+            
+            System.out.println(winkel);
+            rechteck2.setzeRotation((int)winkel);
+            
             text.setzeText("FPS: "+leinwand.holeFPS()+" Drücke Null -> Rechteck verschwindet!");
 
             leinwand.neuZeichnen();
         }
+        
+        leinwand.schliessen();
     }
 }
