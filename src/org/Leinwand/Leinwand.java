@@ -46,8 +46,9 @@ public class Leinwand {
     //und bekommen ein Handle
     public static Leinwand leinwandSingleton;
 
+    String lwjgl = "", jinput = "", jinput2 = "", openAL = "";
+    
     private Leinwand() {
-        String lwjgl = "", jinput = "", jinput2 = "", openAL = "";
         System.out.println("System detected: " + getOsName() + "; Using " + getDataModel2() + "-bit Version;");
         System.out.println("Loading natives");
 
@@ -262,6 +263,21 @@ public class Leinwand {
         //Destroy the Display
         Display.destroy();
         AL.destroy();
+        
+        if(!this.lwjgl.isEmpty()){
+            new File(this.lwjgl).delete();
+        }
+        if(!this.jinput.isEmpty()){
+            new File(this.jinput).delete();
+        }
+        if(!this.jinput2.isEmpty()){
+            new File(this.jinput).delete();
+        }
+        if(!this.openAL.isEmpty()){
+            new File(this.openAL).delete();
+        }
+        
+        System.exit(0);
     }
 
     /**
