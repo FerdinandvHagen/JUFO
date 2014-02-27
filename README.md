@@ -13,6 +13,13 @@ Findet sich im Ordner src/org/Test
 Wird die Leinwand.jar direkt gestartet (z.B. Doppelklick), wird diese Demo ausgeführt.
 
 
+Dokumentation:
+===============
+Javadoc befindet sich in doc.
+Am Besten alle Dateien herunterladen (z.B. als ZIP-Datei), dann kann man durch anklicken der index.html schön durch die Dateien navigieren
+
+
+
 Kurzfassung
 ===============
 Für die Visualisierung von Objekten beziehungsweise dem spielerischen Erlernen von Objektorientierung im Informatik-Unterricht werden verschiedene vorgefertigte Hilfen verwendet. Häufig verwendet werden dabei Klassen, die auf fertige Java-Bausteine aufbauen. Damit ist es möglich in Fenstern auf dem Monitor einfache geometrische Figuren darzustellen (häufig und auch hier einfach nur "Leinwand" gennant, ). Die vielleicht beste und bekannte Alternative ist die "engineAlpha" von Michael Andonie. Auch sie basiert auf fertigen Bausteinen von Java.
