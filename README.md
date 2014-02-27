@@ -20,7 +20,7 @@ Am Besten alle Dateien herunterladen (z.B. als ZIP-Datei), dann kann man durch a
 
 
 
-Kurzfassung
+Kurzfassung:
 ===============
 Für die Visualisierung von Objekten beziehungsweise dem spielerischen Erlernen von Objektorientierung im Informatik-Unterricht werden verschiedene vorgefertigte Hilfen verwendet. Häufig verwendet werden dabei Klassen, die auf fertige Java-Bausteine aufbauen. Damit ist es möglich in Fenstern auf dem Monitor einfache geometrische Figuren darzustellen (häufig und auch hier einfach nur "Leinwand" gennant, ). Die vielleicht beste und bekannte Alternative ist die "engineAlpha" von Michael Andonie. Auch sie basiert auf fertigen Bausteinen von Java.
 
