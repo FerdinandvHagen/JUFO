@@ -1,6 +1,5 @@
-openGL-Leinwand
-===============
 Schnelleinstieg:
+===============
 Es wird nur die Leinwand.jar benötigt! Die .jar wird als Library in der gwünschten IDE hinzugefügt.
 Klassen die auf die Leinwand zugreifen wollen, müssen diese zunächst durch
 
