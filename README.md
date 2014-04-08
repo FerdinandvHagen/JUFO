@@ -8,7 +8,7 @@ import org.Leinwand.*;
 importieren. Danach ist sie ohne weitere Konfiguration verwendbar.
 
 
-Beispielporjekt:
+Beispielprojekt:
 Findet sich im Ordner src/org/Test
 Wird die Leinwand.jar direkt gestartet (z.B. Doppelklick), wird diese Demo ausgeführt.
 
